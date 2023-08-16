@@ -280,7 +280,7 @@ namespace Microsoft.Maui.DeviceTests
 			SetupBuilder();
 
 			var references = new List<WeakReference>();
-			var listView = new ListView
+			var listView = new CustomListView
 			{
 				ItemTemplate = new DataTemplate(() =>
 				{
@@ -298,6 +298,8 @@ namespace Microsoft.Maui.DeviceTests
 				listView.ItemsSource = null;
 				await Task.Delay(100);
 				ValidatePlatformCells(listView);
+
+				listView.UnhookChildren();
 			});
 
 			await AssertionExtensions.WaitForGC(references.ToArray());
@@ -345,6 +347,17 @@ namespace Microsoft.Maui.DeviceTests
 				Assert.Equal("5", cells[1].Text);
 				Assert.Equal("6", cells[2].Text);
 			});
+		}
+
+		class CustomListView : ListView
+		{
+			public void UnhookChildren()
+			{
+				foreach (Cell cell in ((IVisualTreeElement)this).GetVisualChildren())
+				{
+					UnhookContent(cell);
+				}
+			}
 		}
 	}
 }

@@ -19,7 +19,7 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 		public const double DefaultMinHeight = 44;
 
 		readonly Color _androidDefaultTextColor;
-		Cell _cell;
+		readonly WeakReference<Cell> _cell;
 		readonly AppCompatTextView _detailText;
 		readonly ImageView _imageView;
 		readonly AppCompatTextView _mainText;
@@ -33,7 +33,7 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 
 		public BaseCellView(Context context, Cell cell) : base(context)
 		{
-			_cell = cell;
+			_cell = new(cell);
 			SetMinimumWidth((int)context.ToPixels(25));
 			SetMinimumHeight((int)context.ToPixels(25));
 			Orientation = Orientation.Horizontal;
@@ -113,10 +113,7 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 			}
 		}
 
-		Element INativeElementView.Element
-		{
-			get { return _cell; }
-		}
+		Element INativeElementView.Element => _cell.TryGetTarget(out var cell) ? cell : null;
 
 		public void SetAccessoryView(AView view)
 		{
@@ -192,7 +189,10 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 				_imageView.SetImageDrawable(null);
 			}
 
-			source.LoadImage(_cell.FindMauiContext(), (drawable) =>
+			if (!_cell.TryGetTarget(out var cell))
+				return;
+
+			source.LoadImage(cell.FindMauiContext(), (drawable) =>
 			{
 				_imageView.SetImageDrawable(drawable?.Value);
 			});

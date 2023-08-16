@@ -15,7 +15,7 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 	{
 		static readonly PropertyChangedEventHandler PropertyChangedHandler = OnGlobalCellPropertyChanged;
 
-		EventHandler _onForceUpdateSizeRequested;
+		//EventHandler _onForceUpdateSizeRequested;
 
 		public static PropertyMapper<Cell, CellRenderer> Mapper =
 				new PropertyMapper<Cell, CellRenderer>(ElementHandler.ElementMapper);
@@ -79,7 +79,7 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 			else
 				holder.Renderer = this;
 
-			Cell.PropertyChanged += PropertyChangedHandler;
+			//Cell.PropertyChanged += PropertyChangedHandler;
 			((ICellController)Cell).SendAppearing();
 
 			Performance.Stop(reference);
@@ -111,21 +111,21 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 
 		protected void WireUpForceUpdateSizeRequested(Cell cell, AView platformCell)
 		{
-			ICellController cellController = cell;
-			cellController.ForceUpdateSizeRequested -= _onForceUpdateSizeRequested;
+			//ICellController cellController = cell;
+			//cellController.ForceUpdateSizeRequested -= _onForceUpdateSizeRequested;
 
-			_onForceUpdateSizeRequested = (sender, e) =>
-			{
-				if (platformCell.Handle == IntPtr.Zero)
-					return;
-				// RenderHeight may not be changed, but that's okay, since we
-				// don't actually use the height argument in the OnMeasure override.
-				platformCell.Measure(platformCell.Width, (int)cell.RenderHeight);
-				platformCell.SetMinimumHeight(platformCell.MeasuredHeight);
-				platformCell.SetMinimumWidth(platformCell.MeasuredWidth);
-			};
+			//_onForceUpdateSizeRequested = (sender, e) =>
+			//{
+			//	if (platformCell.Handle == IntPtr.Zero)
+			//		return;
+			//	// RenderHeight may not be changed, but that's okay, since we
+			//	// don't actually use the height argument in the OnMeasure override.
+			//	platformCell.Measure(platformCell.Width, (int)cell.RenderHeight);
+			//	platformCell.SetMinimumHeight(platformCell.MeasuredHeight);
+			//	platformCell.SetMinimumWidth(platformCell.MeasuredWidth);
+			//};
 
-			cellController.ForceUpdateSizeRequested += _onForceUpdateSizeRequested;
+			//cellController.ForceUpdateSizeRequested += _onForceUpdateSizeRequested;
 		}
 
 		internal static CellRenderer GetRenderer(Cell cell)
