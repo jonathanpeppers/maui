@@ -9,6 +9,7 @@ using Microsoft.Maui;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Controls.Handlers;
 using Microsoft.Maui.Controls.Handlers.Compatibility;
+using Microsoft.Maui.Controls.Handlers.Items;
 using Microsoft.Maui.DeviceTests.Stubs;
 using Microsoft.Maui.Graphics;
 using Microsoft.Maui.Handlers;
@@ -37,6 +38,7 @@ namespace Microsoft.Maui.DeviceTests
 					handlers.AddHandler(typeof(VerticalStackLayout), typeof(LayoutHandler));
 					handlers.AddHandler(typeof(Toolbar), typeof(ToolbarHandler));
 					handlers.AddHandler(typeof(Button), typeof(ButtonHandler));
+					handlers.AddHandler<CarouselView, CarouselViewHandler>();
 					handlers.AddHandler<Page, PageHandler>();
 					handlers.AddHandler<Label, LabelHandler>();
 
@@ -406,6 +408,38 @@ namespace Microsoft.Maui.DeviceTests
 				Assert.True(newPage.Content.Height > pageHeight);
 			});
 		}
+
+		[Fact(DisplayName = "TabbedPage Does Not Leak")]
+		public async Task DoesNotLeak()
+		{
+			SetupBuilder();
+			WeakReference pageReference = null;
+			var navPage = new NavigationPage(new ContentPage { Title = "Page 1" });
+			var tabbedPage = new TabbedPage
+			{
+				Children = { navPage }
+			};
+
+			await CreateHandlerAndAddToWindow<WindowHandlerStub>(new Window(navPage), async (handler) =>
+			{
+				var page = new ContentPage
+				{
+					Title = "Page 2",
+					Content = new VerticalStackLayout
+					{
+						new Label(),
+						new CarouselView(),
+					}
+				};
+				pageReference = new WeakReference(page);
+				await navPage.Navigation.PushAsync(page);
+				await navPage.Navigation.PopAsync();
+			});
+
+			await AssertionExtensions.WaitForGC(pageReference);
+			Assert.False(pageReference.IsAlive, "Page should not be alive!");
+		}
+
 
 		public class TabbedPagePivots : IEnumerable<object[]>
 		{

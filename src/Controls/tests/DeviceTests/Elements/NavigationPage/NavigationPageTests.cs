@@ -36,6 +36,7 @@ namespace Microsoft.Maui.DeviceTests
 					handlers.AddHandler<Frame, FrameRenderer>();
 					handlers.AddHandler<Label, LabelHandler>();
 					handlers.AddHandler<Button, ButtonHandler>();
+					handlers.AddHandler<CarouselView, CarouselViewHandler>();
 					handlers.AddHandler<CollectionView, CollectionViewHandler>();
 					handlers.AddHandler(typeof(Controls.ContentView), typeof(ContentViewHandler));
 					handlers.AddHandler(typeof(ScrollView), typeof(ScrollViewHandler));
@@ -318,7 +319,8 @@ namespace Microsoft.Maui.DeviceTests
 						new Button(),
 						new CollectionView(),
 						new ScrollView(),
-						new ContentView()
+						new ContentView(),
+						new CarouselView(),
 					}
 				};
 				pageReference = new WeakReference(page);

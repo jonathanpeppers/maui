@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Controls.Handlers.Compatibility;
+using Microsoft.Maui.Controls.Handlers.Items;
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Hosting;
 using Xunit;
@@ -18,6 +19,7 @@ public class MemoryTests : ControlsHandlerTestBase
 			builder.ConfigureMauiHandlers(handlers =>
 			{
 				handlers.AddHandler<Border, BorderHandler>();
+				handlers.AddHandler<CarouselView, CarouselViewHandler>();
 				handlers.AddHandler<CheckBox, CheckBoxHandler>();
 				handlers.AddHandler<DatePicker, DatePickerHandler>();
 				handlers.AddHandler<Entry, EntryHandler>();
@@ -38,6 +40,7 @@ public class MemoryTests : ControlsHandlerTestBase
 
 	[Theory("Handler Does Not Leak")]
 	[InlineData(typeof(Border))]
+	[InlineData(typeof(CarouselView))]
 	[InlineData(typeof(ContentView))]
 	[InlineData(typeof(CheckBox))]
 	[InlineData(typeof(DatePicker))]
@@ -70,6 +73,15 @@ public class MemoryTests : ControlsHandlerTestBase
 			var layout = new Grid();
 			var view = (View)Activator.CreateInstance(type);
 			layout.Add(view);
+			if (view is ContentView content)
+			{
+				content.Content = new Label();
+			}
+			else if (view is ItemsView items)
+			{
+				items.ItemTemplate = new DataTemplate(() => new Label());
+				items.ItemsSource = new[] { 1, 2, 3 };
+			}
 			var handler = CreateHandler<LayoutHandler>(layout);
 			viewReference = new WeakReference(view);
 			handlerReference = new WeakReference(view.Handler);
