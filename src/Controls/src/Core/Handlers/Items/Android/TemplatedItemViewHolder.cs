@@ -80,7 +80,10 @@ namespace Microsoft.Maui.Controls.Handlers.Items
 				View.BindingContext = itemBindingContext;
 			}
 
-			itemsView.AddLogicalChild(View);
+			if (View.Parent != itemsView)
+			{
+				itemsView.AddLogicalChild(View);
+			}
 		}
 
 		protected override bool UseDefaultSelectionColor

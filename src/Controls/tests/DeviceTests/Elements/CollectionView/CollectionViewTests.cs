@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
@@ -38,8 +39,10 @@ namespace Microsoft.Maui.DeviceTests
 			});
 		}
 
-		[Fact]
-		public async Task ItemsSourceDoesNotLeak()
+		[Theory]
+		[InlineData(true)]
+		[InlineData(false)]
+		public async Task ItemsSourceDoesNotLeak(bool isGrouped)
 		{
 			SetupBuilder();
 
@@ -47,9 +50,10 @@ namespace Microsoft.Maui.DeviceTests
 			WeakReference weakReference = null;
 			var collectionView = new CollectionView
 			{
+				IsGrouped = isGrouped,
 				Header = new Label { Text = "Header" },
 				Footer = new Label { Text = "Footer" },
-				ItemTemplate = new DataTemplate(() => new Label())
+				ItemTemplate = new DataTemplate(() => new Label()),
 			};
 
 			await CreateHandlerAndAddToWindow<CollectionViewHandler>(collectionView, async handler =>
@@ -61,7 +65,18 @@ namespace Microsoft.Maui.DeviceTests
 					"Item 3"
 				};
 				weakReference = new WeakReference(data);
-				collectionView.ItemsSource = data;
+				if (isGrouped)
+				{
+					var group = new ObservableCollection<ObservableCollection<string>>
+					{
+						data
+					};
+					collectionView.ItemsSource = group;
+				}
+				else
+				{
+					collectionView.ItemsSource = data;
+				}
 				await Task.Delay(100);
 
 				// Get ItemsView._logicalChildren
@@ -70,13 +85,26 @@ namespace Microsoft.Maui.DeviceTests
 				Assert.NotNull(logicalChildren);
 
 				// Replace with cloned collection
-				collectionView.ItemsSource = new ObservableCollection<string>(data);
+				if (isGrouped)
+				{
+					var group = new ObservableCollection<ObservableCollection<string>>
+					{
+						new ObservableCollection<string>(data)
+					};
+					collectionView.ItemsSource = group;
+				}
+				else
+				{
+					collectionView.ItemsSource = new ObservableCollection<string>(data);
+				}
 				await Task.Delay(100);
 			});
 
 			await AssertionExtensions.WaitForGC(weakReference);
 			Assert.False(weakReference.IsAlive, "ObservableCollection should not be alive!");
 			Assert.NotNull(logicalChildren);
+
+			var chillins = logicalChildren.Cast<Label>().Select(l => l.BindingContext).ToArray();
 			Assert.True(logicalChildren.Count <= 5, "_logicalChildren should not grow in size!");
 		}
 
