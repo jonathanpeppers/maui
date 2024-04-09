@@ -30,9 +30,16 @@ public abstract class PlatformContentViewGroup extends ViewGroup {
      * Set by C#, determining if we need to call getClipPath()
      * @param hasClip
      */
-    protected final void setHasClip(boolean hasClip) {
+    protected void setHasClip(boolean hasClip) {
         this.hasClip = hasClip;
         postInvalidate();
+    }
+
+    /**
+     * @return if hasClip is true
+     */
+    protected boolean getHasClip() {
+        return hasClip;
     }
 
     @Override

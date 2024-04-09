@@ -2267,7 +2267,6 @@ override Microsoft.Maui.Platform.PlatformTouchGraphicsView.OnLayout(bool changed
 override Microsoft.Maui.Platform.PlatformTouchGraphicsView.OnTouchEvent(Android.Views.MotionEvent? e) -> bool
 override Microsoft.Maui.Platform.WrapperView.OnDetachedFromWindow() -> void
 override Microsoft.Maui.Platform.WrapperView.OnLayout(bool changed, int left, int top, int right, int bottom) -> void
-override Microsoft.Maui.Platform.WrapperView.RequestLayout() -> void
 override Microsoft.Maui.RectangleGridAdorner.Draw(Microsoft.Maui.Graphics.ICanvas! canvas, Microsoft.Maui.Graphics.RectF dirtyRect) -> void
 override Microsoft.Maui.Semantics.ToString() -> string!
 override Microsoft.Maui.SizeRequest.ToString() -> string!

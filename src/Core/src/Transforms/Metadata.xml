@@ -12,6 +12,10 @@
   <!-- Internal methods & constructors -->
   <attr path="//class[@name='PlatformAppCompatTextView']/method" name="visibility">internal</attr>
   <attr path="//class[@name='PlatformAppCompatTextView']/constructor" name="visibility">internal</attr>
+  <attr path="//class[@name='PlatformContentViewGroup']/method[@name='getHasClip']" name="visibility">internal</attr>
+  <attr path="//class[@name='PlatformWrapperView']/method[@name='disableShadow']" name="visibility">internal</attr>
+  <attr path="//class[@name='PlatformWrapperView']/method[@name='enableShadow']" name="visibility">internal</attr>
+  <attr path="//class[@name='PlatformWrapperView']/method[@name='drawShadow']" name="visibility">internal</attr>
 
   <remove-node path="//package[@name='com.bumptech.glide']" />
   <remove-node path="//package[@name='com.microsoft.maui.glide']" />
