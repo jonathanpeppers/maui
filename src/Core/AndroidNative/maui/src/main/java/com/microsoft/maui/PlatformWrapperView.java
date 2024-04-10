@@ -175,7 +175,7 @@ public abstract class PlatformWrapperView extends PlatformContentViewGroup {
 
                 // Create the local copy of all content to draw bitmap as a
                 // bottom layer of natural canvas.
-                super.dispatchDraw(shadowCanvas);
+                viewGroupDispatchDraw(shadowCanvas);
 
                 // Get the alpha bounds of bitmap
                 Bitmap extractAlpha = shadowBitmap.extractAlpha();
