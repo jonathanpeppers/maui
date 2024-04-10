@@ -66,13 +66,13 @@ namespace Microsoft.Maui.Platform
 				if (paint is LinearGradientPaint linearGradientPaint)
 				{
 					var linearGradientShaderFactory = PaintExtensions.GetGradientShaderFactory(linearGradientPaint, shadowOpacity);
-					var shader = linearGradientShaderFactory.Resize(bitmapWidth, bitmapHeight);
+					var shader = linearGradientShaderFactory.Resize(1, 1); //TODO: this should be bitmapWidth, bitmapHeight
 					EnableShadow(shader, (float)Shadow.Radius, (float)Shadow.Offset.X, (float)Shadow.Offset.Y);
 				}
 				else if (paint is RadialGradientPaint radialGradientPaint)
 				{
 					var radialGradientShaderFactory = PaintExtensions.GetGradientShaderFactory(radialGradientPaint, shadowOpacity);
-					var shader = radialGradientShaderFactory.Resize(bitmapWidth, bitmapHeight);
+					var shader = radialGradientShaderFactory.Resize(1, 1); //TODO: this should be bitmapWidth, bitmapHeight
 					EnableShadow(shader, (float)Shadow.Radius, (float)Shadow.Offset.X, (float)Shadow.Offset.Y);
 				}
 				else if (paint is SolidPaint solidPaint)
