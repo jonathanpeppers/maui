@@ -9,6 +9,7 @@ using Foundation;
 using Microsoft.Maui.Controls.Compatibility;
 using Microsoft.Maui.Controls.Internals;
 using Microsoft.Maui.Controls.Platform;
+using Microsoft.Maui.Controls.PlatformConfiguration.AndroidSpecific;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 using Microsoft.Maui.Devices;
 using Microsoft.Maui.Graphics;
@@ -802,14 +803,15 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 
 			nfloat GetEstimatedRowHeight(UITableView table)
 			{
-				if (List.RowHeight != -1)
+				var list = List;
+				if (list.RowHeight != -1)
 				{
 					// Not even sure we need this case; A list with HasUnevenRows and a RowHeight doesn't make a ton of sense
 					// Anyway, no need for an estimate, because the heights we'll use are known
 					return 0;
 				}
 
-				var templatedItems = TemplatedItemsView.TemplatedItems;
+				var templatedItems = ((ITemplatedItemsView<Cell>)list).TemplatedItems;
 
 				if (templatedItems.Count == 0)
 				{
@@ -818,7 +820,7 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 				}
 
 				// We're going to base our estimate off of the first cell
-				var isGroupingEnabled = List.IsGroupingEnabled;
+				var isGroupingEnabled = list.IsGroupingEnabled;
 
 				if (isGroupingEnabled)
 					templatedItems = templatedItems.GetGroup(0);
@@ -969,10 +971,11 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 			static int s_dataTemplateIncrementer = 2; // lets start at not 0 because
 			readonly nfloat _defaultSectionHeight;
 			Dictionary<DataTemplate, int> _templateToId = new Dictionary<DataTemplate, int>();
-			UITableView _uiTableView;
-			FormsUITableViewController _uiTableViewController;
-			protected ListView List;
-			protected ITemplatedItemsView<Cell> TemplatedItemsView => List;
+			readonly WeakReference<UITableView> _uiTableView;
+			readonly WeakReference<FormsUITableViewController> _uiTableViewController;
+			readonly WeakReference<ListView> _list;
+			protected ListView List => _list.GetTargetOrDefault();
+			protected ITemplatedItemsView<Cell> TemplatedItemsView => _list.GetTargetOrDefault();
 			bool _isDragging;
 			bool _setupSelection;
 			bool _selectionFromNative;
@@ -985,7 +988,7 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 			public ListViewDataSource(ListViewDataSource source)
 			{
 				_uiTableViewController = source._uiTableViewController;
-				List = source.List;
+				_list = source._list;
 				_uiTableView = source._uiTableView;
 				_defaultSectionHeight = source._defaultSectionHeight;
 				_selectionFromNative = source._selectionFromNative;
@@ -995,11 +998,11 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 
 			public ListViewDataSource(ListView list, FormsUITableViewController uiTableViewController)
 			{
-				_uiTableViewController = uiTableViewController;
-				_uiTableView = uiTableViewController.TableView;
+				_uiTableViewController = new(uiTableViewController);
+				_uiTableView = new(uiTableViewController.TableView);
 				_defaultSectionHeight = DefaultRowHeight;
-				List = list;
-				List.ItemSelected += OnItemSelected;
+				_list = new(list);
+				list.ItemSelected += OnItemSelected;
 				UpdateShortNameListener();
 
 				Counts = new Dictionary<int, int>();
@@ -1022,7 +1025,10 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 			public override void DraggingEnded(UIScrollView scrollView, bool willDecelerate)
 			{
 				_isDragging = false;
-				_uiTableViewController.UpdateShowHideRefresh(false);
+				if (_uiTableViewController.TryGetTarget(out var uiTableViewController))
+				{
+					uiTableViewController.UpdateShowHideRefresh(false);
+				}
 			}
 
 			public override void DraggingStarted(UIScrollView scrollView)
@@ -1050,7 +1056,8 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 
 				Performance.Start(out string reference);
 
-				var cachingStrategy = List.CachingStrategy;
+				var list = List;
+				var cachingStrategy = list.CachingStrategy;
 				if (cachingStrategy == ListViewCachingStrategy.RetainElement)
 				{
 					cell = GetCellForPath(indexPath);
@@ -1068,7 +1075,7 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 					}
 					else
 					{
-						var templatedList = TemplatedItemsView.TemplatedItems.GetGroup(indexPath.Section);
+						var templatedList = list.TemplatedItems.GetGroup(indexPath.Section);
 
 						cell = (Cell)((INativeElementView)platformCell).Element;
 						cell.SendDisappearing();
@@ -1082,9 +1089,9 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 
 				SetupSelection(platformCell, tableView);
 
-				if (List.IsSet(Specifics.SeparatorStyleProperty))
+				if (list.IsSet(Specifics.SeparatorStyleProperty))
 				{
-					if (List.OnThisPlatform().GetSeparatorStyle() == SeparatorStyle.FullWidth)
+					if (list.OnThisPlatform().GetSeparatorStyle() == SeparatorStyle.FullWidth)
 					{
 						platformCell.SeparatorInset = UIEdgeInsets.Zero;
 						platformCell.LayoutMargins = UIEdgeInsets.Zero;
@@ -1100,9 +1107,10 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 
 			public override nfloat GetHeightForHeader(UITableView tableView, nint section)
 			{
-				if (List.IsGroupingEnabled)
+				var list = List;
+				if (list.IsGroupingEnabled)
 				{
-					var cell = TemplatedItemsView.TemplatedItems[(int)section];
+					var cell = list.TemplatedItems[(int)section];
 					nfloat height = (float)cell.RenderHeight;
 					if (height == -1)
 						height = _defaultSectionHeight;
@@ -1115,10 +1123,11 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 
 			public override UIView GetViewForHeader(UITableView tableView, nint section)
 			{
-				if (!List.IsGroupingEnabled)
+				var list = List;
+				if (!list.IsGroupingEnabled)
 					return null;
 
-				var cell = TemplatedItemsView.TemplatedItems[(int)section];
+				var cell = list.TemplatedItems[(int)section];
 				if (cell.HasContextActions)
 					throw new NotSupportedException("Header cells do not support context actions");
 
@@ -1150,8 +1159,9 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 
 			public override nint NumberOfSections(UITableView tableView)
 			{
-				if (List.IsGroupingEnabled)
-					return TemplatedItemsView.TemplatedItems.Count;
+				var list = List;
+				if (list.IsGroupingEnabled)
+					return list.TemplatedItems.Count;
 
 				return 1;
 			}
@@ -1164,19 +1174,23 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 					return;
 				}
 
-				if (List == null)
+				var list = List;
+				if (list == null)
 					return;
 
-				var location = TemplatedItemsView.TemplatedItems.GetGroupAndIndexOfItem(eventArg.SelectedItem);
+				if (!_uiTableView.TryGetTarget(out var uiTableView))
+					return;
+
+				var location = list.TemplatedItems.GetGroupAndIndexOfItem(eventArg.SelectedItem);
 				if (location.Item1 == -1 || location.Item2 == -1)
 				{
-					var selectedIndexPath = _uiTableView.IndexPathForSelectedRow;
+					var selectedIndexPath = uiTableView.IndexPathForSelectedRow;
 
 					var animate = true;
 
 					if (selectedIndexPath != null)
 					{
-						var cell = _uiTableView.CellAt(selectedIndexPath) as ContextActionsCell;
+						var cell = uiTableView.CellAt(selectedIndexPath) as ContextActionsCell;
 						if (cell != null)
 						{
 							cell.PrepareForDeselect();
@@ -1186,11 +1200,11 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 					}
 
 					if (selectedIndexPath != null)
-						_uiTableView.DeselectRow(selectedIndexPath, animate);
+						uiTableView.DeselectRow(selectedIndexPath, animate);
 					return;
 				}
 
-				_uiTableView.SelectRow(NSIndexPath.FromRowSection(location.Item2, location.Item1), true, UITableViewScrollPosition.Middle);
+				uiTableView.SelectRow(NSIndexPath.FromRowSection(location.Item2, location.Item1), true, UITableViewScrollPosition.Middle);
 			}
 
 			public override void RowDeselected(UITableView tableView, NSIndexPath indexPath)
@@ -1209,19 +1223,20 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 				if (cell == null)
 					return;
 
+				var list = List;
 				Cell formsCell = null;
-				if ((List.CachingStrategy & ListViewCachingStrategy.RecycleElement) != 0)
+				if ((list.CachingStrategy & ListViewCachingStrategy.RecycleElement) != 0)
 					formsCell = (Cell)((INativeElementView)cell).Element;
 
 				SetCellBackgroundColor(cell, UIColor.Clear);
 
-				if (List.SelectionMode == ListViewSelectionMode.None)
+				if (list.SelectionMode == ListViewSelectionMode.None)
 					tableView.DeselectRow(indexPath, false);
 
 				_selectionFromNative = true;
 
 				tableView.EndEditing(true);
-				List.NotifyRowTapped(indexPath.Section, indexPath.Row, formsCell);
+				list.NotifyRowTapped(indexPath.Section, indexPath.Row, formsCell);
 			}
 
 			public override nint RowsInSection(UITableView tableview, nint section)
@@ -1240,8 +1255,9 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 					return countOverride;
 				}
 
-				var templatedItems = TemplatedItemsView.TemplatedItems;
-				if (List.IsGroupingEnabled)
+				var list = List;
+				var templatedItems = list.TemplatedItems;
+				if (list.IsGroupingEnabled)
 				{
 					var group = (IList)((IList)templatedItems)[(int)section];
 					return group.Count;
@@ -1252,6 +1268,9 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 
 			public override void Scrolled(UIScrollView scrollView)
 			{
+				if (!_uiTableViewController.TryGetTarget(out var uiTableViewController))
+					return;
+
 				var args = new ScrolledEventArgs(scrollView.ContentOffset.X, scrollView.ContentOffset.Y);
 				List?.SendScrolled(args);
 
@@ -1263,13 +1282,13 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 					// will promptly kill, and the app will close)
 					// So we temporarily flip _isDragging to false in order to prevent the loop.
 					_isDragging = false;
-					_uiTableViewController.UpdateShowHideRefresh(true);
+					uiTableViewController.UpdateShowHideRefresh(true);
 					_isDragging = true;
 				}
 
-				if (_isDragging && scrollView.ContentOffset.Y < -10f && _uiTableViewController._usingLargeTitles && DeviceDisplay.MainDisplayInfo.Orientation.IsPortrait())
+				if (_isDragging && scrollView.ContentOffset.Y < -10f && uiTableViewController._usingLargeTitles && DeviceDisplay.MainDisplayInfo.Orientation.IsPortrait())
 				{
-					_uiTableViewController.ForceRefreshing();
+					uiTableViewController.ForceRefreshing();
 				}
 			}
 
@@ -1292,10 +1311,13 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 			{
 				UpdateShortNameListener();
 
+				if (!_uiTableView.TryGetTarget(out var uiTableView))
+					return;
+
 				if (List.OnThisPlatform().RowAnimationsEnabled())
-					_uiTableView.ReloadData();
+					uiTableView.ReloadData();
 				else
-					PerformWithoutAnimation(() => { _uiTableView.ReloadData(); });
+					PerformWithoutAnimation(uiTableView.ReloadData);
 			}
 
 			public void DetermineEstimatedRowHeight()
@@ -1303,15 +1325,19 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 				if (_estimatedRowHeight)
 					return;
 
-				UpdateEstimatedRowHeight(_uiTableView);
+				if (!_uiTableView.TryGetTarget(out var uiTableView))
+					return;
+
+				UpdateEstimatedRowHeight(uiTableView);
 
 				_estimatedRowHeight = true;
 			}
 
 			protected bool IsValidIndexPath(NSIndexPath indexPath)
 			{
-				var templatedItems = TemplatedItemsView.TemplatedItems;
-				if (List.IsGroupingEnabled)
+				var list = List;
+				var templatedItems = ((ITemplatedItemsView<Cell>)list).TemplatedItems;
+				if (list.IsGroupingEnabled)
 				{
 					var section = indexPath.Section;
 					if (section < 0 || section >= templatedItems.Count)
@@ -1325,8 +1351,9 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 
 			protected ITemplatedItemsList<Cell> GetTemplatedItemsListForPath(NSIndexPath indexPath)
 			{
-				var templatedItems = TemplatedItemsView.TemplatedItems;
-				if (List.IsGroupingEnabled)
+				var list = List;
+				var templatedItems = ((ITemplatedItemsView<Cell>)list).TemplatedItems;
+				if (list.IsGroupingEnabled)
 					templatedItems = (ITemplatedItemsList<Cell>)((IList)templatedItems)[indexPath.Section];
 
 				return templatedItems;
@@ -1355,10 +1382,13 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 
 			void OnShortNamesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 			{
+				if (!_uiTableView.TryGetTarget(out var uiTableView))
+					return;
+
 				if (List.OnThisPlatform().RowAnimationsEnabled())
-					_uiTableView.ReloadSectionIndexTitles();
+					uiTableView.ReloadSectionIndexTitles();
 				else
-					PerformWithoutAnimation(() => { _uiTableView.ReloadSectionIndexTitles(); });
+					PerformWithoutAnimation(uiTableView.ReloadSectionIndexTitles);
 			}
 
 			static void SetCellBackgroundColor(UITableViewCell cell, UIColor color)
@@ -1424,7 +1454,8 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 				tableView.EstimatedRowHeight = DefaultRowHeight;
 
 				// if even rows OR uneven rows but user specified a row height anyway...
-				if (!List.HasUnevenRows || List.RowHeight != -1)
+				var list = List;
+				if (!list.HasUnevenRows || list.RowHeight != -1)
 					tableView.EstimatedRowHeight = 0;
 			}
 
@@ -1435,16 +1466,13 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 
 				if (disposing)
 				{
-					if (List != null)
+					if (List is ListView list)
 					{
-						List.ItemSelected -= OnItemSelected;
+						list.ItemSelected -= OnItemSelected;
 						WatchShortNameCollection(false);
-						List = null;
 					}
 
 					_templateToId = null;
-					_uiTableView = null;
-					_uiTableViewController = null;
 				}
 
 				_disposed = true;
