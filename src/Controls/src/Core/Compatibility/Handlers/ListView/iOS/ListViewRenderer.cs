@@ -1002,7 +1002,7 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 				_uiTableView = new(uiTableViewController.TableView);
 				_defaultSectionHeight = DefaultRowHeight;
 				_list = new(list);
-				list.ItemSelected += OnItemSelected;
+				//list.ItemSelected += OnItemSelected;
 				UpdateShortNameListener();
 
 				Counts = new Dictionary<int, int>();
@@ -1530,7 +1530,7 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 
 	internal sealed class FormsUITableViewController : UITableViewController
 	{
-		ListView _list;
+		readonly WeakReference<ListView> _list;
 		UIRefreshControl _refresh;
 
 		bool _refreshAdded;
@@ -1549,8 +1549,8 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 			_usingLargeTitles = usingLargeTitles;
 
 			_refresh = new FormsRefreshControl(_usingLargeTitles);
-			_refresh.ValueChanged += OnRefreshingChanged;
-			_list = element;
+			//_refresh.ValueChanged += OnRefreshingChanged;
+			_list = new(element);
 		}
 
 		public void UpdateIsRefreshing(bool refreshing)
@@ -1594,7 +1594,7 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 				UpdateContentOffset(-1);
 
 				_isRefreshing = false;
-				if (!_list.IsPullToRefreshEnabled)
+				if (_list.TryGetTarget(out var list) && !list.IsPullToRefreshEnabled)
 					RemoveRefresh();
 			}
 		}
@@ -1641,31 +1641,37 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 		//hack: Form some reason UIKit isn't allowing to scroll negative values with largetitles
 		public void ForceRefreshing()
 		{
-			if (!_list.IsPullToRefreshEnabled)
+			if (!_list.TryGetTarget(out var list))
+				return;
+			if (!list.IsPullToRefreshEnabled)
 				return;
 			if (!_refresh.Refreshing && !_isRefreshing)
 			{
 				_isRefreshing = true;
 				UpdateContentOffset(TableView.ContentOffset.Y - _refresh.Frame.Height, StartRefreshing);
-				_list.SendRefreshing();
+				list.SendRefreshing();
 			}
 		}
 
 		public void UpdateShowHideRefresh(bool shouldHide)
 		{
-			if (_list.IsPullToRefreshEnabled)
+			if (!_list.TryGetTarget(out var list))
+				return;
+			if (list.IsPullToRefreshEnabled)
 				return;
 
 			if (shouldHide)
 				RemoveRefresh();
 			else
-				UpdateIsRefreshing(_list.IsRefreshing);
+				UpdateIsRefreshing(list.IsRefreshing);
 		}
 
 		public override void ViewWillAppear(bool animated)
 		{
 			(TableView?.Source as ListViewRenderer.ListViewDataSource)?.Cleanup();
-			if (!_list.IsRefreshing || !_refresh.Refreshing)
+			if (!_list.TryGetTarget(out var list))
+				return;
+			if (!list.IsRefreshing || !_refresh.Refreshing)
 				return;
 
 			// Restart the refreshing to get the animation to trigger
@@ -1698,8 +1704,6 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 					_refresh.Dispose();
 					_refresh = null;
 				}
-
-				_list = null;
 			}
 
 			_disposed = true;
@@ -1717,8 +1721,8 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 
 		void OnRefreshingChanged(object sender, EventArgs eventArgs)
 		{
-			if (_refresh.Refreshing)
-				_list.SendRefreshing();
+			if (_refresh.Refreshing && _list.TryGetTarget(out var list))
+				list.SendRefreshing();
 
 			_isRefreshing = _refresh.Refreshing;
 		}
