@@ -1002,7 +1002,7 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 				_uiTableView = new(uiTableViewController.TableView);
 				_defaultSectionHeight = DefaultRowHeight;
 				_list = new(list);
-				//list.ItemSelected += OnItemSelected;
+				list.ItemSelected += OnItemSelected;
 				UpdateShortNameListener();
 
 				Counts = new Dictionary<int, int>();
