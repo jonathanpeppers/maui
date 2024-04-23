@@ -1549,7 +1549,7 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 			_usingLargeTitles = usingLargeTitles;
 
 			_refresh = new FormsRefreshControl(_usingLargeTitles);
-			//_refresh.ValueChanged += OnRefreshingChanged;
+			_refresh.ValueChanged += OnRefreshingChanged;
 			_list = new(element);
 		}
 
