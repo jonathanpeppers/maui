@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using CoreAnimation;
 using CoreGraphics;
 using Foundation;
@@ -23,14 +24,14 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 		#endregion IShellSectionRootRenderer
 
 		internal const int HeaderHeight = 35;
-		IShellContext _shellContext;
+		WeakReference<IShellContext> _shellContext;
 		UIView _blurView;
 		UIView _containerArea;
-		ShellContent _currentContent;
+		WeakReference<ShellContent> _currentContent;
 		int _currentIndex = 0;
 		IShellSectionRootHeader _header;
-		IPlatformViewHandler _isAnimatingOut;
-		Dictionary<ShellContent, IPlatformViewHandler> _renderers = new Dictionary<ShellContent, IPlatformViewHandler>();
+		WeakReference _isAnimatingOut;
+		ConditionalWeakTable<ShellContent, IPlatformViewHandler> _renderers = new();
 		IShellPageRendererTracker _tracker;
 		bool _didLayoutSubviews;
 		int _lastTabThickness = Int32.MinValue;
@@ -39,20 +40,23 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 		bool _isRotating;
 		UIViewPropertyAnimator _pageAnimation;
 		UIEdgeInsets _additionalSafeArea = UIEdgeInsets.Zero;
+		WeakReference<ShellSection> _shellSection;
 
 		ShellSection ShellSection
 		{
-			get;
-			set;
+			get => _shellSection?.GetTargetOrDefault();
+			set => _shellSection = value is null ? null : new(value);
 		}
+
+		IShellContext ShellContext => _shellContext is not null && _shellContext.TryGetTarget(out var context) ? context : null;
 
 		IShellSectionController ShellSectionController => ShellSection;
 
 		public ShellSectionRootRenderer(ShellSection shellSection, IShellContext shellContext)
 		{
 			ShellSection = shellSection ?? throw new ArgumentNullException(nameof(shellSection));
-			_shellContext = shellContext;
-			_shellContext.Shell.PropertyChanged += HandleShellPropertyChanged;
+			_shellContext = new(shellContext);
+			//shellContext.Shell.PropertyChanged += HandleShellPropertyChanged;
 		}
 
 		public override void ViewDidLayoutSubviews()
@@ -98,8 +102,8 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 
 			LoadRenderers();
 
-			ShellSection.PropertyChanged += OnShellSectionPropertyChanged;
-			ShellSectionController.ItemsCollectionChanged += OnShellSectionItemsChanged;
+			//ShellSection.PropertyChanged += OnShellSectionPropertyChanged;
+			//ShellSectionController.ItemsCollectionChanged += OnShellSectionItemsChanged;
 
 			_blurView = new UIView();
 			UIVisualEffect blurEffect = UIBlurEffect.FromStyle(UIBlurEffectStyle.ExtraLight);
@@ -109,13 +113,16 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 
 			UpdateHeaderVisibility();
 
-			var tracker = _shellContext.CreatePageRendererTracker();
-			tracker.IsRootPage = true;
-			tracker.ViewController = this;
+			if (ShellContext is IShellContext shellContext)
+			{
+				var tracker = shellContext.CreatePageRendererTracker();
+				tracker.IsRootPage = true;
+				tracker.ViewController = this;
 
-			if (ShellSection.CurrentItem != null)
-				tracker.Page = ((IShellContentController)ShellSection.CurrentItem).GetOrCreateContent();
-			_tracker = tracker;
+				if (ShellSection.CurrentItem != null)
+					tracker.Page = ((IShellContentController)ShellSection.CurrentItem).GetOrCreateContent();
+				_tracker = tracker;
+			}
 			UpdateFlowDirection();
 		}
 
@@ -147,7 +154,7 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 			base.TraitCollectionDidChange(previousTraitCollection);
 #pragma warning restore CA1422 // Validate platform compatibility
 
-			var application = _shellContext?.Shell?.FindMauiContext().Services.GetService<IApplication>();
+			var application = ShellContext?.Shell?.FindMauiContext().Services.GetService<IApplication>();
 			application?.ThemeChanged();
 		}
 
@@ -161,8 +168,8 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 			if (ShellSectionController != null)
 				ShellSectionController.ItemsCollectionChanged -= OnShellSectionItemsChanged;
 
-			if (_shellContext?.Shell != null)
-				_shellContext.Shell.PropertyChanged -= HandleShellPropertyChanged;
+			if (ShellContext?.Shell is Shell shell)
+				shell.PropertyChanged -= HandleShellPropertyChanged;
 
 			if (_renderers != null)
 			{
@@ -203,9 +210,9 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 				_renderers.Clear();
 			}
 
-			if (disposing)
+			if (disposing && ShellContext?.Shell is Shell shell)
 			{
-				_shellContext.Shell.PropertyChanged -= HandleShellPropertyChanged;
+				shell.PropertyChanged -= HandleShellPropertyChanged;
 			}
 
 			_shellContext = null;
@@ -283,7 +290,7 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 			{
 				ShellContent item = contentItems[i];
 
-				if (_renderers.ContainsKey(item))
+				if (_renderers.TryGetValue(item, out _))
 					continue;
 
 				Page page = null;
@@ -300,7 +307,7 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 				if (item == currentItem)
 				{
 					_containerArea.AddSubview(renderer.ViewController.View);
-					_currentContent = currentItem;
+					_currentContent = new(currentItem);
 					_currentIndex = i;
 				}
 			}
@@ -320,14 +327,14 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 			if (e.PropertyName == ShellSection.CurrentItemProperty.PropertyName)
 			{
 				var newContent = ShellSection.CurrentItem;
-				var oldContent = _currentContent;
+				var oldContent = _currentContent?.GetTargetOrDefault();
 
 				if (newContent == null)
 					return;
 
-				if (_currentContent == null)
+				if (oldContent == null)
 				{
-					_currentContent = newContent;
+					_currentContent = new(newContent);
 					_currentIndex = ShellSectionController.GetItems().IndexOf(_currentContent);
 					_tracker.Page = ((IShellContentController)newContent).Page;
 					return;
@@ -339,7 +346,8 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 
 				var oldIndex = _currentIndex;
 				var newIndex = items.IndexOf(newContent);
-				var oldRenderer = _renderers[oldContent];
+				if (!_renderers.TryGetValue(oldContent, out var oldRenderer))
+					return;
 
 				// this means the currently visible item has been removed
 				if (oldIndex == -1 && _currentIndex <= newIndex)
@@ -347,14 +355,13 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 					newIndex++;
 				}
 
-				_currentContent = newContent;
+				_currentContent = new(newContent);
 				_currentIndex = newIndex;
 
-				if (!_renderers.ContainsKey(newContent))
+				if (!_renderers.TryGetValue(newContent, out var currentRenderer))
 					return;
 
-				var currentRenderer = _renderers[newContent];
-				_isAnimatingOut = oldRenderer;
+				_isAnimatingOut = new(oldRenderer);
 				_pageAnimation?.StopAnimation(true);
 				_pageAnimation = null;
 				_pageAnimation = CreateContentAnimator(oldRenderer, currentRenderer, oldIndex, newIndex, _containerArea);
@@ -427,7 +434,7 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 
 					r.Value.ViewController?.ViewIfLoaded?.RemoveFromSuperview();
 
-					if (!sectionItems.Contains(oldContent) && _renderers.ContainsKey(oldContent))
+					if (!sectionItems.Contains(oldContent) && _renderers.TryGetValue(oldContent, out _))
 					{
 						removeMe = removeMe ?? new List<ShellContent>();
 						removeMe.Add(oldContent);
@@ -463,9 +470,9 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 
 			if (visible)
 			{
-				if (_header == null)
+				if (_header == null && ShellContext is IShellContext shellContext)
 				{
-					_header = CreateShellSectionRootHeader(_shellContext);
+					_header = CreateShellSectionRootHeader(shellContext);
 					_header.ShellSection = ShellSection;
 
 					AddChildViewController(_header.ViewController);
@@ -489,8 +496,8 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 
 		void UpdateFlowDirection()
 		{
-			if (_shellContext?.Shell?.CurrentItem?.CurrentItem == ShellSection)
-				this.View.UpdateFlowDirection(_shellContext.Shell);
+			if (ShellContext is IShellContext shellContext && shellContext?.Shell?.CurrentItem?.CurrentItem == ShellSection)
+				this.View.UpdateFlowDirection(shellContext.Shell);
 		}
 
 		void OnShellSectionItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -507,12 +514,10 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 				{
 					// if current item is removed will be handled by the currentitem property changed event
 					// That way the render is swapped out cleanly once the new current item is set
-					if (_currentContent == oldItem)
+					if (_currentContent?.GetTargetOrDefault() == oldItem)
 						continue;
 
-					var oldRenderer = _renderers[oldItem];
-
-					if (oldRenderer == _isAnimatingOut)
+					if (!_renderers.TryGetValue(oldItem, out var oldRenderer) || oldRenderer == _isAnimatingOut?.Target)
 						continue;
 
 					if (e.OldStartingIndex < _currentIndex)
@@ -529,7 +534,7 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 			{
 				foreach (ShellContent newItem in e.NewItems)
 				{
-					if (_renderers.ContainsKey(newItem))
+					if (_renderers.TryGetValue(newItem, out _))
 						continue;
 
 					var page = ((IShellContentController)newItem).GetOrCreateContent();
@@ -545,7 +550,7 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 			page.Handler?.DisconnectHandler();
 
 			var renderer = (IPlatformViewHandler)page.ToHandler(shellContent.FindMauiContext());
-			_renderers[shellContent] = renderer;
+			_renderers.AddOrUpdate(shellContent, renderer);
 			UpdateAdditionalSafeAreaInsets(renderer);
 			return renderer;
 		}

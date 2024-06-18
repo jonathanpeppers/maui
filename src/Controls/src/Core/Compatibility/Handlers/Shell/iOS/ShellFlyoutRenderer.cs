@@ -53,7 +53,7 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 		void IShellFlyoutRenderer.AttachFlyout(IShellContext context, UIViewController content)
 		{
 			Context = context;
-			Shell = Context.Shell;
+			Shell = context.Shell;
 			Detail = content;
 
 			Shell.PropertyChanged += OnShellPropertyChanged;
@@ -128,6 +128,7 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 		UIViewPropertyAnimator _flyoutAnimation;
 		Brush _backdropBrush;
 		bool _layoutOccured;
+		WeakReference<IShellContext> _shellContext;
 
 		public UIViewAnimationCurve AnimationCurve { get; set; } = UIViewAnimationCurve.EaseOut;
 
@@ -147,7 +148,11 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 
 		SlideFlyoutTransition SlideFlyoutTransition { get; set; }
 
-		IShellContext Context { get; set; }
+		IShellContext Context
+		{
+			get => _shellContext?.GetTargetOrDefault();
+			set => _shellContext = value is null ? null : new(value);
+		}
 
 		UIViewController Detail { get; set; }
 

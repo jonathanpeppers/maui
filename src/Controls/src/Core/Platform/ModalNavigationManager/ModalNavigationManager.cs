@@ -16,7 +16,7 @@ namespace Microsoft.Maui.Controls.Platform
 		List<Page> _platformModalPages = new List<Page>();
 		NavigatingStepRequestList _modalPages = new NavigatingStepRequestList();
 
-		Page? _currentPage;
+		WeakReference? _currentPage;
 
 		Page CurrentPlatformPage =>
 			_platformModalPages.Count > 0 ? _platformModalPages[_platformModalPages.Count - 1] : (_window.Page ?? throw new InvalidOperationException("Current Window isn't loaded"));
@@ -313,10 +313,11 @@ namespace Microsoft.Maui.Controls.Platform
 				return;
 			}
 
-			if (_currentPage != _window.Page)
+			if (_currentPage?.Target != _window.Page)
 			{
-				var previousPage = _currentPage;
-				_currentPage = _window.Page;
+				var previousPage = _currentPage?.Target as Page;
+				var currentPage = _window.Page;
+				_currentPage = new(currentPage);
 
 				if (previousPage is not null)
 				{
@@ -324,11 +325,11 @@ namespace Microsoft.Maui.Controls.Platform
 					ClearModalPages(xplat: true);
 				}
 
-				if (_currentPage is not null)
+				if (currentPage is not null)
 				{
-					if (_currentPage.Handler is null)
+					if (currentPage.Handler is null)
 					{
-						_currentPage.HandlerChanged += OnCurrentPageHandlerChanged;
+						currentPage.HandlerChanged += OnCurrentPageHandlerChanged;
 					}
 					else
 					{
@@ -340,9 +341,9 @@ namespace Microsoft.Maui.Controls.Platform
 
 		void OnCurrentPageHandlerChanged(object? sender, EventArgs e)
 		{
-			if (_currentPage is not null)
+			if (_currentPage?.Target is Page currentPage)
 			{
-				_currentPage.HandlerChanged -= OnCurrentPageHandlerChanged;
+				currentPage.HandlerChanged -= OnCurrentPageHandlerChanged;
 				SyncModalStackWhenPlatformIsReady();
 			}
 		}

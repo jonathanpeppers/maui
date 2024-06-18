@@ -20,13 +20,13 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 
 		public ShellItem ShellItem
 		{
-			get => _shellItem;
+			get => _shellItem?.GetTargetOrDefault();
 			set
 			{
-				if (_shellItem == value)
+				if (ShellItem == value)
 					return;
-				_shellItem = value;
-				OnShellItemSet(_shellItem);
+				_shellItem = value is null ? null : new(value);
+				OnShellItemSet(value);
 				CreateTabRenderers();
 			}
 		}
@@ -46,20 +46,20 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 
 		#endregion IAppearanceObserver
 
-		readonly IShellContext _context;
+		readonly WeakReference<IShellContext> _context;
 		readonly Dictionary<UIViewController, IShellSectionRenderer> _sectionRenderers = new Dictionary<UIViewController, IShellSectionRenderer>();
 		IShellTabBarAppearanceTracker _appearanceTracker;
 		ShellSection _currentSection;
 		Page _displayedPage;
 		bool _disposed;
-		ShellItem _shellItem;
+		WeakReference<ShellItem> _shellItem;
 		static UIColor _defaultMoreTextLabelTextColor;
 
 		internal IShellSectionRenderer CurrentRenderer { get; private set; }
 
 		public ShellItemRenderer(IShellContext context)
 		{
-			_context = context;
+			_context = new(context);
 		}
 
 		public override UIViewController SelectedViewController
@@ -140,10 +140,10 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 				((IShellSectionController)_currentSection).RemoveDisplayedPageObserver(this);
 
 
-			if (ShellItem != null)
-				ShellItem.PropertyChanged -= OnElementPropertyChanged;
+			if (ShellItem is ShellItem item)
+				item.PropertyChanged -= OnElementPropertyChanged;
 
-			if (_context?.Shell is IShellController shellController)
+			if (_context.GetTargetOrDefault()?.Shell is IShellController shellController)
 				shellController.RemoveAppearanceObserver(this);
 
 			if (ShellItemController != null)
@@ -216,7 +216,7 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 				for (int j = 0; j < items.Count; j++)
 				{
 					var shellContent = items[j];
-					var renderer = RendererForShellContent(shellContent) ?? _context.CreateShellSectionRenderer(shellContent);
+					var renderer = RendererForShellContent(shellContent) ?? _context.GetTargetOrDefault().CreateShellSectionRenderer(shellContent);
 
 					if (willUseMore && j >= maxTabs - 1)
 						renderer.IsInMoreTab = true;
@@ -243,9 +243,10 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 
 		protected virtual void OnShellItemSet(ShellItem shellItem)
 		{
-			_appearanceTracker = _context.CreateTabBarAppearanceTracker();
+			var context = _context.GetTargetOrDefault();
+			_appearanceTracker = context.CreateTabBarAppearanceTracker();
 			shellItem.PropertyChanged += OnElementPropertyChanged;
-			((IShellController)_context.Shell).AddAppearanceObserver(this, shellItem);
+			((IShellController)context.Shell).AddAppearanceObserver(this, shellItem);
 			ShellItemController.ItemsCollectionChanged += OnItemsCollectionChanged;
 		}
 
@@ -292,7 +293,7 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 			int i = 0;
 			foreach (var shellContent in items)
 			{
-				var renderer = _context.CreateShellSectionRenderer(shellContent);
+				var renderer = _context.GetTargetOrDefault().CreateShellSectionRenderer(shellContent);
 
 				renderer.IsInMoreTab = willUseMore && i >= maxTabs - 1;
 

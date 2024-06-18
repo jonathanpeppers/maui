@@ -34,10 +34,10 @@ namespace Microsoft.Maui.Controls.Platform
 			if (e.PropertyName != Window.PageProperty.PropertyName)
 				return;
 
-			if (_currentPage is not null &&
-				_currentPage.Handler is IPlatformViewHandler pvh &&
+			if (_currentPage?.Target is Page currentPage &&
+				currentPage.Handler is IPlatformViewHandler pvh &&
 				pvh.ViewController?.PresentedViewController is ModalWrapper &&
-				_window.Page != _currentPage)
+				_window.Page != currentPage)
 			{
 				ClearModalPages(xplat: true, platform: true);
 

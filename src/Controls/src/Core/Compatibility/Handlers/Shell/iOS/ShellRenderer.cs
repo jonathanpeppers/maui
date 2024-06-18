@@ -98,6 +98,7 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 		Task _activeTransition = Task.CompletedTask;
 		IShellItemRenderer _incomingRenderer;
 		IMauiContext _mauiContext;
+		WeakReference<VisualElement> _element;
 
 		IShellFlyoutRenderer FlyoutRenderer
 		{
@@ -115,7 +116,12 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 
 		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
 
-		public VisualElement Element { get; private set; }
+		public VisualElement Element
+		{
+			get => _element?.GetTargetOrDefault();
+			private set => _element = value is null ? null : new(value);
+		}
+
 		public UIView NativeView => FlyoutRenderer.View;
 		public Shell Shell => (Shell)Element;
 		public UIViewController ViewController => FlyoutRenderer.ViewController;
