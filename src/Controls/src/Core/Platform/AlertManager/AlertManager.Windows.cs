@@ -26,12 +26,13 @@ namespace Microsoft.Maui.Controls.Platform
 		{
 			IMauiContext? mauiContext = window?.Handler?.MauiContext;
 			var platformWindow = mauiContext?.GetPlatformWindow();
-			if (platformWindow == null)
-				return;
 
-			var toRemove = Subscriptions.Where(s => s.PlatformView == platformWindow).ToList();
+			var toRemove = 
+				platformWindow is null ?
+				Subscriptions.Where(s => s.VirtualView == window) :
+				Subscriptions.Where(s => s.PlatformView == platformWindow);
 
-			foreach (AlertRequestHelper alertRequestHelper in toRemove)
+			foreach (AlertRequestHelper alertRequestHelper in toRemove.ToArray())
 			{
 				alertRequestHelper.Dispose();
 				Subscriptions.Remove(alertRequestHelper);

@@ -45,7 +45,7 @@ namespace Microsoft.Maui.Controls
 			shell.HandlerChanged += (_, __) => ApplyChanges();
 
 			ApplyChanges();
-			_toolbarTracker.CollectionChanged += (_, __) => ToolbarItems = _toolbarTracker.ToolbarItems;
+			//_toolbarTracker.CollectionChanged += (_, __) => ToolbarItems = _toolbarTracker.ToolbarItems;
 #if WINDOWS
 			_menuBarTracker.CollectionChanged += (_, __) => ApplyChanges();
 #endif

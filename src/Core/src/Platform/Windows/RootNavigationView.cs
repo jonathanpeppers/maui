@@ -27,11 +27,11 @@ namespace Microsoft.Maui.Platform
 			IsTitleBarAutoPaddingEnabled = false;
 			IsBackButtonVisible = NavigationViewBackButtonVisible.Collapsed;
 
-			RegisterPropertyChangedCallback(IsBackButtonVisibleProperty, BackButtonVisibleChanged);
-			RegisterPropertyChangedCallback(OpenPaneLengthProperty, PaneLengthPropertyChanged);
-			RegisterPropertyChangedCallback(HeaderProperty, HeaderPropertyChanged);
-			RegisterPropertyChangedCallback(PaneFooterProperty, HeaderPropertyChanged);
-			RegisterPropertyChangedCallback(PaneDisplayModeProperty, PaneDisplayModeChanged);
+			//RegisterPropertyChangedCallback(IsBackButtonVisibleProperty, BackButtonVisibleChanged);
+			//RegisterPropertyChangedCallback(OpenPaneLengthProperty, PaneLengthPropertyChanged);
+			//RegisterPropertyChangedCallback(HeaderProperty, HeaderPropertyChanged);
+			//RegisterPropertyChangedCallback(PaneFooterProperty, HeaderPropertyChanged);
+			//RegisterPropertyChangedCallback(PaneDisplayModeProperty, PaneDisplayModeChanged);
 
 			this.PaneOpened += (_, __) => UpdatePaneContentGridMargin();
 			this.DisplayModeChanged += (_, __) => UpdateNavigationAndPaneButtonHolderGridStyles();

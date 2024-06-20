@@ -55,9 +55,9 @@ namespace Microsoft.Maui.Platform
 
 		public MauiNavigationView()
 		{
-			this.RegisterPropertyChangedCallback(MenuItemsSourceProperty, (_, __) => UpdateMenuItemsContainerHeight());
-			this.RegisterPropertyChangedCallback(MenuItemsProperty, (_, __) => UpdateMenuItemsContainerHeight());
-			RegisterPropertyChangedCallback(PaneDisplayModeProperty, PaneDisplayModeChanged);
+			//this.RegisterPropertyChangedCallback(MenuItemsSourceProperty, (_, __) => UpdateMenuItemsContainerHeight());
+			//this.RegisterPropertyChangedCallback(MenuItemsProperty, (_, __) => UpdateMenuItemsContainerHeight());
+			//RegisterPropertyChangedCallback(PaneDisplayModeProperty, PaneDisplayModeChanged);
 		}
 
 		void PaneDisplayModeChanged(DependencyObject sender, DependencyProperty dp) =>

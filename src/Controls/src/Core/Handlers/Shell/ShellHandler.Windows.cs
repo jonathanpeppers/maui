@@ -56,6 +56,11 @@ namespace Microsoft.Maui.Controls.Handlers
 			platformView.PaneOpening -= OnPaneOpening;
 			platformView.PaneClosing -= OnPaneClosing;
 			platformView.ItemInvoked -= OnMenuItemInvoked;
+
+			foreach (var item in VirtualView.Items)
+			{
+				item.Handler?.DisconnectHandler();
+			}
 		}
 
 		void OnMenuItemInvoked(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs args)

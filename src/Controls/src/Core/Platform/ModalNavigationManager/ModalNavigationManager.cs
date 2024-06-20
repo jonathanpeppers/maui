@@ -46,19 +46,19 @@ namespace Microsoft.Maui.Controls.Platform
 		public ModalNavigationManager(Window window)
 		{
 			_window = window;
-			_window.PropertyChanged += (_, args) =>
-			{
-				if (args.Is(Window.PageProperty))
-					SettingNewPage();
-			};
+			//_window.PropertyChanged += (_, args) =>
+			//{
+			//	if (args.Is(Window.PageProperty))
+			//		SettingNewPage();
+			//};
 
 			InitializePlatform();
 
-			_window.HandlerChanging += OnWindowHandlerChanging;
-			_window.Destroying += (_, _) =>
-			{
-				ClearModalPages(platform: true);
-			};
+			//_window.HandlerChanging += OnWindowHandlerChanging;
+			//_window.Destroying += (_, _) =>
+			//{
+			//	ClearModalPages(platform: true);
+			//};
 		}
 
 		void OnWindowHandlerChanging(object? sender, HandlerChangingEventArgs e)

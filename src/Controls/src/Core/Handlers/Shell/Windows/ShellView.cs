@@ -260,7 +260,7 @@ namespace Microsoft.Maui.Controls.Platform
 				ItemRenderer = (ShellItemHandler)Element.CurrentItem.ToHandler(MauiContext);
 				if (ItemRenderer.PlatformView is NavigationView nv)
 				{
-					nv.SelectionChanged += TabSelectionChanged;
+					//nv.SelectionChanged += TabSelectionChanged;
 				}
 			}
 

@@ -1000,6 +1000,46 @@ namespace Microsoft.Maui.DeviceTests
 		}
 #endif
 
+		[Fact(DisplayName = "Shells Do Not Leak")]
+		public async Task ShellsDoNotLeak()
+		{
+			SetupBuilder();
+
+			WeakReference shellReference = null;
+
+			{
+				var shell = await InvokeOnMainThreadAsync(() => new FooShell { CurrentItem = new ContentPage() });
+				shellReference = new WeakReference(shell);
+
+				await CreateHandlerAndAddToWindow<ShellHandler>(shell, async _ =>
+				{
+					await OnLoadedAsync(shell.CurrentPage);
+
+					shell.Handler.DisconnectHandler();
+				});
+
+				//await InvokeOnMainThreadAsync(shell.Handler.DisconnectHandler);
+			}
+
+			// Replace with a second shell
+			var newShell = await CreateShellAsync(shell =>
+			{
+				shell.CurrentItem = new ContentPage();
+			});
+			await CreateHandlerAndAddToWindow<ShellHandler>(newShell, async _ =>
+			{
+				await OnLoadedAsync(newShell.CurrentPage);
+			});
+
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
+			await Task.Delay(1000);
+
+			await AssertionExtensions.WaitForGC(shellReference);
+		}
+
+		class FooShell : Shell { }
+
 		[Fact(DisplayName = "Pages Do Not Leak")]
 		public async Task PagesDoNotLeak()
 		{
