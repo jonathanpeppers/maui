@@ -1009,20 +1009,24 @@ namespace Microsoft.Maui.DeviceTests
 				shell.CurrentItem = new ContentPage() { Title = "Page 1" };
 			});
 
-			WeakReference pageReference = null;
+			var references = new List<WeakReference>();
 
 			await CreateHandlerAndAddToWindow<ShellHandler>(shell, async (handler) =>
 			{
 				await OnLoadedAsync(shell.CurrentPage);
 
 				var page = new LeakyShellPage();
-				pageReference = new WeakReference(page);
-
 				await shell.Navigation.PushAsync(page);
+				await OnLoadedAsync(page);
+
+				references.Add(new(page));
+				references.Add(new(page.Handler));
+				references.Add(new(page.Handler.PlatformView));
+
 				await shell.Navigation.PopAsync();
 			});
 
-			await AssertionExtensions.WaitForGC(pageReference);
+			await AssertionExtensions.WaitForGC(references.ToArray());
 		}
 
 		class LeakyShellPage : ContentPage
