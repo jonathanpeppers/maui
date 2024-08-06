@@ -13,6 +13,10 @@ using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Hosting;
 using Xunit;
 using static Microsoft.Maui.DeviceTests.AssertHelpers;
+#if IOS || MACCATALYST
+using CoreAnimation;
+using UIKit;
+#endif
 
 namespace Microsoft.Maui.DeviceTests
 {
@@ -391,11 +395,19 @@ namespace Microsoft.Maui.DeviceTests
 #endif
 
 			SetupBuilder();
-			WeakReference pageReference = null;
+			var references = new List<WeakReference>();
 			var navPage = new NavigationPage(new ContentPage { Title = "Page 1" });
 
 			await CreateHandlerAndAddToWindow<WindowHandlerStub>(new Window(navPage), async (handler) =>
 			{
+				var border = new Border
+				{
+					StrokeShape = new RoundRectangle { CornerRadius = new CornerRadius(10) },
+					StrokeThickness = 2,
+					StrokeDashOffset = 2,
+					Content = new Label(),
+				};
+
 				var page = new ContentPage
 				{
 					Title = "Page 2",
@@ -408,16 +420,53 @@ namespace Microsoft.Maui.DeviceTests
 						new Label(),
 						new ScrollView(),
 						new RadioButton(),
+						border,
 					}
 				};
 				NavigationPage.SetTitleView(page, new Label() { Text = "Title View" });
-				pageReference = new WeakReference(page);
+				references.Add(new(page));
 				await navPage.Navigation.PushAsync(page);
+
+				references.Add(new(border));
+				references.Add(new(border.Handler));
+				references.Add(new(border.Handler.PlatformView));
+#if IOS || MACCATALYST
+				if (border.Handler.PlatformView is UIView v)
+				{
+					FindCALayers(v, references);
+				}
+#endif
 				await navPage.Navigation.PopAsync();
 			});
 
-			await AssertionExtensions.WaitForGC(pageReference);
+			await AssertionExtensions.WaitForGC(references.ToArray());
 		}
+
+#if IOS || MACCATALYST
+		void FindCALayers(UIView view, List<WeakReference> references)
+		{
+			if (view.Layer is CALayer layer)
+			{
+				references.Add(new(layer));
+				Console.WriteLine($"Layer: {layer}");
+
+				var sublayers = layer.Sublayers;
+				if (sublayers is not null)
+				{
+					foreach (var sublayer in sublayers)
+					{
+						references.Add(new(sublayer));
+						Console.WriteLine($"Sublayer: {sublayer}");
+					}
+				}
+			}
+
+			foreach (var subview in view.Subviews)
+			{
+				FindCALayers(subview, references);
+			}
+		}
+#endif
 
 		[Fact(DisplayName = "Can Reuse Pages"
 #if WINDOWS
