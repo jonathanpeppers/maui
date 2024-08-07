@@ -95,7 +95,7 @@ namespace Maui.Controls.Sample.Issues
 			passwordEntry.Focused += (s, e) => welcomeLabel.Text = "Clicked Password";
 
 			_loginButton = new Button
-			{ 
+			{
 				AutomationId = "Login",
 				ClassId = "loginButton",
 				Text = "Login",
