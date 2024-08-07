@@ -24,14 +24,14 @@ namespace Maui.Controls.Sample.Issues
 			new FontImageSource { FontFamily = "FA", Glyph = "\uf111", Size = 200, Color = Colors.Blue },
 			new FontImageSource { FontFamily = "FA", Glyph = "\uf192", Size = 200, Color = Colors.Blue }
 		];
-		
+
 		int imageNo = -1;
 
 		public Issue6625()
 		{
 			InitializeComponent();
 			Container.GestureRecognizers.Add(new TapGestureRecognizer { Command = new Command(NextImage) });
-		    NextImage();
+			NextImage();
 		}
 
 		void NextImage()
