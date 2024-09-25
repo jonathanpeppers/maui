@@ -22,9 +22,9 @@ namespace Maui.Controls.Sample.Issues
 			{
 				stackLayout.Children.Remove(frame);
 			}
-			
-		frame?.Handler?.DisconnectHandler();
-		entry?.Handler?.DisconnectHandler();
+
+			frame?.Handler?.DisconnectHandler();
+			entry?.Handler?.DisconnectHandler();
 		}
 	}
 }

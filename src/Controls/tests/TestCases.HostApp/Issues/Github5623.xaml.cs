@@ -116,7 +116,7 @@ namespace Maui.Controls.Sample.Issues
 		}
 	}
 
-	[Preserve(AllMembers = true)] 
+	[Preserve(AllMembers = true)]
 	public class Model5623
 	{
 		Random random = new Random();
@@ -129,7 +129,7 @@ namespace Maui.Controls.Sample.Issues
 
 		public string HeightText { get; private set; }
 
-		public string AutomationId {get; set;}
+		public string AutomationId { get; set; }
 
 		public Model5623(bool isUneven)
 		{

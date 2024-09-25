@@ -19,7 +19,7 @@ namespace Microsoft.Maui.TestCases.Tests.Issues
 		[FailsOnIOS]
 		[FailsOnMac]
 		public void DoesNotCrash()
-		{ 
+		{
 			App.WaitForElement("Success");
 		}
 	}

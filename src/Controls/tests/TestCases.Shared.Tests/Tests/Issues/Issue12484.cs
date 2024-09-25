@@ -18,7 +18,7 @@ namespace Microsoft.Maui.TestCases.Tests.Issues
 		[Category(UITestCategories.Compatibility)]
 		[FailsOnAndroid]
 		public void Issue12484ControlTemplateRendererTest()
-		{ 
+		{
 			App.WaitForNoElement("Success");
 		}
 	}

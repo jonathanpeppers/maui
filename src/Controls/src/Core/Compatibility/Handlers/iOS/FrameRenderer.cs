@@ -215,7 +215,8 @@ namespace Microsoft.Maui.Controls.Handlers.Compatibility
 				_pendingSuperViewSetNeedsLayout = false;
 				this.Superview?.SetNeedsLayout();
 			}
-			else{
+			else
+			{
 				_pendingSuperViewSetNeedsLayout = true;
 			}
 		}

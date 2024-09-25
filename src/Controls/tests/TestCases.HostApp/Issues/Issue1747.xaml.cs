@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
-using Microsoft.Maui.Controls;
 using System.Runtime.CompilerServices;
+using Microsoft.Maui.Controls;
 using Microsoft.Maui.Controls.CustomAttributes;
 using Microsoft.Maui.Controls.Internals;
 

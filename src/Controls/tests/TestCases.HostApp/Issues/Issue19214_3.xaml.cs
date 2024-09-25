@@ -26,7 +26,7 @@ public partial class Issue19214_3 : ContentPage
 		}
 	}
 
-	void AddCursorHeightToLabel (Editor editor)
+	void AddCursorHeightToLabel(Editor editor)
 	{
 #if IOS
 		var textInput = editor.Handler.PlatformView as UIKit.UITextView;

@@ -1305,16 +1305,16 @@ namespace Microsoft.Maui.Controls.Build.Tasks
 				var @else = Create(OpCodes.Nop);
 				var endif = Create(OpCodes.Nop);
 
-				if(context.Variables[elementNode].VariableType.FullName == "System.Object")
+				if (context.Variables[elementNode].VariableType.FullName == "System.Object")
 				{
 					//if(value != null && value.GetType().IsAssignableFrom(typeof(BindingBase)))
 					yield return Create(Ldloc, context.Variables[elementNode]);
 					yield return Create(Brfalse, @else);
-					
+
 					yield return Create(Ldtoken, module.ImportReference(context.Cache, ("Microsoft.Maui.Controls", "Microsoft.Maui.Controls", "BindingBase")));
 					yield return Create(Call, module.ImportMethodReference(context.Cache, ("mscorlib", "System", "Type"), methodName: "GetTypeFromHandle", parameterTypes: new[] { ("mscorlib", "System", "RuntimeTypeHandle") }, isStatic: true));
 					yield return Create(Ldloc, context.Variables[elementNode]);
-					yield return Create(Callvirt, module.ImportMethodReference(context.Cache, ("mscorlib", "System", "Object"), methodName: "GetType",  paramCount: 0));
+					yield return Create(Callvirt, module.ImportMethodReference(context.Cache, ("mscorlib", "System", "Object"), methodName: "GetType", paramCount: 0));
 					yield return Create(Callvirt, module.ImportMethodReference(context.Cache, ("mscorlib", "System", "Type"), methodName: "IsAssignableFrom", parameterTypes: new[] { ("mscorlib", "System", "Type") }));
 					yield return Create(Brfalse, @else);
 					//then
@@ -1328,9 +1328,9 @@ namespace Microsoft.Maui.Controls.Build.Tasks
 					yield return instruction;
 				if (bpTypeRef.IsValueType)
 					yield return Create(Box, module.ImportReference(bpTypeRef));
-				
+
 				//endif
-				if(context.Variables[elementNode].VariableType.FullName == "System.Object")
+				if (context.Variables[elementNode].VariableType.FullName == "System.Object")
 					yield return endif;
 
 			}

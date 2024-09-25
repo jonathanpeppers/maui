@@ -2,13 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using CoreGraphics;
+using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls.Platform;
 using Microsoft.Maui.Graphics;
 using Microsoft.Maui.Handlers;
-using UIKit;
-using CoreGraphics;
-using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Layouts;
+using UIKit;
 
 namespace Microsoft.Maui.Controls
 {
@@ -117,13 +117,13 @@ namespace Microsoft.Maui.Controls
 			var titleRectHeight = titleRect.Height;
 
 			var buttonContentWidth =
-				+ (nfloat)Math.Max(titleRectWidth, platformButton.CurrentImage?.Size.Width ?? 0)
+				+(nfloat)Math.Max(titleRectWidth, platformButton.CurrentImage?.Size.Width ?? 0)
 				+ (nfloat)padding.Left
 				+ (nfloat)padding.Right
 				+ (nfloat)borderWidth * 2;
 
 			var buttonContentHeight =
-				+ (nfloat)Math.Max(titleRectHeight, platformButton.CurrentImage?.Size.Height ?? 0)
+				+(nfloat)Math.Max(titleRectHeight, platformButton.CurrentImage?.Size.Height ?? 0)
 				+ (nfloat)padding.Top
 				+ (nfloat)padding.Bottom
 				+ (nfloat)borderWidth * 2;
@@ -285,7 +285,7 @@ namespace Microsoft.Maui.Controls
 		/// <param name="padding"></param>
 		/// <param name="isMeasuring"></param>
 		/// <returns>Returns a <see cref="CGRect"/> that contains the title text.</returns>
-		CGRect ComputeTitleRect (UIButton platformButton, Button button, UIImage image,  double widthConstraint, double heightConstraint, double borderWidth, Thickness padding, bool isMeasuring)
+		CGRect ComputeTitleRect(UIButton platformButton, Button button, UIImage image, double widthConstraint, double heightConstraint, double borderWidth, Thickness padding, bool isMeasuring)
 		{
 			if (string.IsNullOrEmpty(platformButton.CurrentTitle))
 			{
