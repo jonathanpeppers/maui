@@ -8,10 +8,10 @@ namespace Maui.Controls.Sample.Issues;
 public partial class Issue10660 : Shell
 {
 
-    public Issue10660()
-    {
-        InitializeComponent();
-    }
+	public Issue10660()
+	{
+		InitializeComponent();
+	}
 
 	private void ChangeTextClicked(object sender, EventArgs e)
 	{

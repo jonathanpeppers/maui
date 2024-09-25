@@ -284,14 +284,14 @@ namespace Microsoft.Maui.Controls.Platform
 				if (_element == value)
 					return;
 
-				if (_element is View && ElementGestureRecognizers is {} gestureRecognizersBefore)
+				if (_element is View && ElementGestureRecognizers is { } gestureRecognizersBefore)
 				{
 					gestureRecognizersBefore.CollectionChanged -= _collectionChangedHandler;
 				}
 
 				_element = value;
 
-				if (_element is View && ElementGestureRecognizers is {} gestureRecognizersAfter)
+				if (_element is View && ElementGestureRecognizers is { } gestureRecognizersAfter)
 				{
 					gestureRecognizersAfter.CollectionChanged += _collectionChangedHandler;
 				}
@@ -381,7 +381,7 @@ namespace Microsoft.Maui.Controls.Platform
 
 			ClearContainerEventHandlers();
 
-			if (_element is View && ElementGestureRecognizers is {} gestureRecognizers)
+			if (_element is View && ElementGestureRecognizers is { } gestureRecognizers)
 			{
 				gestureRecognizers.CollectionChanged -= _collectionChangedHandler;
 			}
@@ -421,7 +421,7 @@ namespace Microsoft.Maui.Controls.Platform
 		{
 			if (view == null)
 				return;
-			
+
 			_isPanning = true;
 
 			foreach (IPanGestureController recognizer in view.GestureRecognizers.GetGesturesFor<PanGestureRecognizer>().Where(g => g.TouchPoints == _fingers.Count))
@@ -513,7 +513,7 @@ namespace Microsoft.Maui.Controls.Platform
 				if (_fingers.Contains(id))
 					_fingers.Remove(id);
 			}
-			
+
 			SwipeComplete(true);
 			PinchComplete(true);
 		}
@@ -752,7 +752,7 @@ namespace Microsoft.Maui.Controls.Platform
 			if (allowDrop)
 			{
 				_subscriptionFlags |= SubscriptionFlags.ContainerDropEventsSubscribed;
-				
+
 				_container.AllowDrop = true;
 				_container.DragOver += HandleDragOver;
 				_container.Drop += HandleDrop;
@@ -779,7 +779,7 @@ namespace Microsoft.Maui.Controls.Platform
 				|| children?.GetChildGesturesFor<TapGestureRecognizer>(g => g.NumberOfTapsRequired == 1).Any() == true)
 			{
 				_subscriptionFlags |= SubscriptionFlags.ContainerTapAndRightTabEventSubscribed;
-				
+
 				_container.Tapped += OnTap;
 				_container.RightTapped += OnTap;
 			}

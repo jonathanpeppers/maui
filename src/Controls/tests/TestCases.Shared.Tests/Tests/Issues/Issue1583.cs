@@ -10,8 +10,8 @@ namespace Microsoft.Maui.TestCases.Tests.Issues
 		{
 		}
 
-		public override string Issue => "NavigationPage.TitleIcon broken"; 
-		
+		public override string Issue => "NavigationPage.TitleIcon broken";
+
 		[Test]
 		[Category(UITestCategories.Navigation)]
 		[Category(UITestCategories.Compatibility)]

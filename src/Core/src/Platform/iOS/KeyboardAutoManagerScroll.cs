@@ -681,7 +681,7 @@ public static class KeyboardAutoManagerScroll
 			}
 			else
 			{
-				ApplyContentInset (ScrolledView, LastScrollView, true, false);
+				ApplyContentInset(ScrolledView, LastScrollView, true, false);
 				// if our View is an editor, we can adjust the ContentInset.Bottom so that the text cursor will stay above the keyboard
 				if (ScrolledView != View && View is UITextView textView)
 				{
@@ -840,7 +840,7 @@ public static class KeyboardAutoManagerScroll
 	}
 
 	static bool IsHorizontalCollectionView(UIView collectionView)
-    => collectionView is UICollectionView { CollectionViewLayout: UICollectionViewFlowLayout { ScrollDirection: UICollectionViewScrollDirection.Horizontal }};
+	=> collectionView is UICollectionView { CollectionViewLayout: UICollectionViewFlowLayout { ScrollDirection: UICollectionViewScrollDirection.Horizontal } };
 
 	internal static nfloat FindKeyboardHeight()
 	{
