@@ -29,9 +29,9 @@ namespace Microsoft.Maui.Controls.Xaml.UnitTests
 		{
 			[SetUp] public void Setup() => DispatcherProvider.SetCurrent(new DispatcherProviderStub());
 			[TearDown] public void TearDown() => DispatcherProvider.SetCurrent(null);
-			
-			[Test] 
-			public void TestCompiledBindings([Values(false, true)]bool useCompiledXaml)
+
+			[Test]
+			public void TestCompiledBindings([Values(false, true)] bool useCompiledXaml)
 			{
 				if (useCompiledXaml)
 					MockCompiler.Compile(typeof(BindingsCompiler));
@@ -94,7 +94,7 @@ namespace Microsoft.Maui.Controls.Xaml.UnitTests
 				GC.Collect();
 				vm.Text = "Text2";
 				Assert.AreEqual("Text2", layout.label0.Text);
-				
+
 				//https://github.com/dotnet/maui/issues/21181
 				vm.Model[3] = "TextIndex2";
 				Assert.AreEqual("TextIndex2", layout.label3.Text);
@@ -131,11 +131,11 @@ namespace Microsoft.Maui.Controls.Xaml.UnitTests
 				//testing binding with path that cannot be statically compiled (we don't support casts in the Path)
 				Assert.That(layout.label13.Text, Is.EqualTo("Global Text"));
 			}
-			
-			[Test] 
-			public void BindingsNotAppliedWithWrongContext([Values(false, true)]bool useCompiledXaml)
+
+			[Test]
+			public void BindingsNotAppliedWithWrongContext([Values(false, true)] bool useCompiledXaml)
 			{
-				var page = new BindingsCompiler(useCompiledXaml) { BindingContext = new {Text="Foo"} };
+				var page = new BindingsCompiler(useCompiledXaml) { BindingContext = new { Text = "Foo" } };
 				Assert.AreEqual(null, page.label0.Text);
 			}
 		}

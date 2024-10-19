@@ -169,16 +169,17 @@ public partial class RenderingPerformance : ContentPage
 	{
 		return
 		[
-			..Enumerable.Range(0, count).Select(i => new ViewModelStub
+			.. Enumerable.Range(0, count).Select(i => new ViewModelStub
 			{
 				Content = $"{prefix} Content {i}",
 				Header = $"Header {i}",
 				SubModels = Enumerable.Range(0, 10).Select(j => new NestedViewModelStub
 				{
-					Content = $"{prefix} SubContent {j}", Header = $"{prefix} SubHeader {j}"
+					Content = $"{prefix} SubContent {j}",
+					Header = $"{prefix} SubHeader {j}"
 				}).ToArray()
 			}),
-			..GenerateMeasuredItem()
+			.. GenerateMeasuredItem()
 		];
 	}
 

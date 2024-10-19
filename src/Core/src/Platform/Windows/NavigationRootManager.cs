@@ -113,12 +113,12 @@ namespace Microsoft.Maui.Platform
 		public virtual void Disconnect()
 		{
 			_rootView.OnWindowTitleBarContentSizeChanged -= WindowRootViewOnWindowTitleBarContentSizeChanged;
-      
+
 			if (_platformWindow.TryGetTarget(out var platformWindow))
 			{
 				platformWindow.Activated -= OnWindowActivated;
 			}
-      
+
 			SetToolbar(null);
 			SetTitleBar(null, null);
 
@@ -151,7 +151,7 @@ namespace Microsoft.Maui.Platform
 		internal void SetTitleBar(ITitleBar? titlebar, IMauiContext? mauiContext)
 		{
 			if (_platformWindow.TryGetTarget(out var window))
-			{ 
+			{
 				_rootView.AppWindowId = window.GetAppWindow()?.Id;
 				_rootView.SetTitleBar(titlebar, mauiContext);
 			}

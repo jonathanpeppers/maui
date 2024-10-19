@@ -145,7 +145,7 @@ namespace Microsoft.Maui.Handlers
 		{
 			SendProcessFailed(args);
 		}
-		
+
 		async void SendNavigated(string url, WebNavigationEvent evnt, WebNavigationResult result)
 		{
 			if (VirtualView is not null)

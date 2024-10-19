@@ -10,9 +10,9 @@ namespace Microsoft.Maui.Controls.Xaml
 	[ContentProperty(nameof(Default))]
 	[RequireService(
 		[typeof(IProvideValueTarget),
-		 typeof(IValueConverterProvider),
-		 typeof(IXmlLineInfoProvider),
-		 typeof(IConverterOptions)])]
+			typeof(IValueConverterProvider),
+			typeof(IXmlLineInfoProvider),
+			typeof(IConverterOptions)])]
 	[RequiresUnreferencedCode("The OnPlatformExtension is not trim safe. Use OnPlatform<T> instead.")]
 	public class OnPlatformExtension : IMarkupExtension
 	{
@@ -77,7 +77,8 @@ namespace Microsoft.Maui.Controls.Xaml
 
 					if (targetObject is Setter)
 						return null;
-					else return bp.GetDefaultValue(targetObject as BindableObject);
+					else
+						return bp.GetDefaultValue(targetObject as BindableObject);
 				}
 				if (propertyType.IsValueType)
 					return Activator.CreateInstance(propertyType);

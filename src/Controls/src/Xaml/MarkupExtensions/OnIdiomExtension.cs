@@ -11,9 +11,9 @@ namespace Microsoft.Maui.Controls.Xaml
 	[ContentProperty(nameof(Default))]
 	[RequireService(
 		[typeof(IProvideValueTarget),
-		 typeof(IValueConverterProvider),
-		 typeof(IXmlLineInfoProvider),
-		 typeof(IConverterOptions)])]
+			typeof(IValueConverterProvider),
+			typeof(IXmlLineInfoProvider),
+			typeof(IConverterOptions)])]
 	[RequiresUnreferencedCode("The OnIdiomExtension is not trim safe. Use OnIdiom<T> instead.")]
 	public class OnIdiomExtension : IMarkupExtension
 	{

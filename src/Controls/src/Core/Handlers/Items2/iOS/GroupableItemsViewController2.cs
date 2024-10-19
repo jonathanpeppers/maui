@@ -60,8 +60,8 @@ namespace Microsoft.Maui.Controls.Handlers.Items2
 
 		private protected override void RegisterSupplementaryViews(UICollectionElementKindSection kind)
 		{
-			 base.RegisterSupplementaryViews(kind);
-			 if (IsHorizontal)
+			base.RegisterSupplementaryViews(kind);
+			if (IsHorizontal)
 			{
 				CollectionView.RegisterClassForSupplementaryView(typeof(HorizontalSupplementaryView2),
 					kind, HorizontalSupplementalView2ReuseId);
