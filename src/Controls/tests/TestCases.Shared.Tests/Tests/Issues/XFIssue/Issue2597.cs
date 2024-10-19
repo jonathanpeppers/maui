@@ -15,23 +15,23 @@ public class Issue2597 : _IssuesUITest
 	// [Test]
 	// [Category(UITestCategories.Stepper)]
 	// [FailsOnIOS]
-// 	public void Issue2597Test()
-// 	{
-// #if __IOS__
-// 		RunningApp.Tap(x => x.Marked("Increment"));
-// #else
-// 		RunningApp.Tap("+");
-// #endif
+	// 	public void Issue2597Test()
+	// 	{
+	// #if __IOS__
+	// 		RunningApp.Tap(x => x.Marked("Increment"));
+	// #else
+	// 		RunningApp.Tap("+");
+	// #endif
 
-// 		RunningApp.WaitForElement(q => q.Marked("Stepper value is 0"));
+	// 		RunningApp.WaitForElement(q => q.Marked("Stepper value is 0"));
 
 
-// #if __IOS__
-// 		RunningApp.Tap(x => x.Marked("Decrement"));
-// #else
-// 		RunningApp.Tap("−");
-// #endif
+	// #if __IOS__
+	// 		RunningApp.Tap(x => x.Marked("Decrement"));
+	// #else
+	// 		RunningApp.Tap("−");
+	// #endif
 
-// 		RunningApp.WaitForElement(q => q.Marked("Stepper value is 0"));
-// 	}
+	// 		RunningApp.WaitForElement(q => q.Marked("Stepper value is 0"));
+	// 	}
 }

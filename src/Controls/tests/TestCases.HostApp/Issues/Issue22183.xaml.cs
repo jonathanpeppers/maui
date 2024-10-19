@@ -20,10 +20,10 @@ namespace Maui.Controls.Sample.Issues
 			{
 				GroupId = 0,
 			},
-			new Issue22183Model()
-			{
-				GroupId = 1,
-			}]);
+				new Issue22183Model()
+				{
+					GroupId = 1,
+				}]);
 	}
 
 	public class Issue22183Model : BindableObject

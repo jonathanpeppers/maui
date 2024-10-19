@@ -13,7 +13,7 @@ namespace Microsoft.Maui.Controls
 	[ProvideCompiled("Microsoft.Maui.Controls.XamlC.SetterValueProvider")]
 	[RequireService(
 		[typeof(IValueConverterProvider),
-		 typeof(IXmlLineInfoProvider)])]
+			typeof(IXmlLineInfoProvider)])]
 	public sealed class Setter : IValueProvider
 	{
 		/// <include file="../../docs/Microsoft.Maui.Controls/Setter.xml" path="//Member[@MemberName='TargetName']/Docs/*" />

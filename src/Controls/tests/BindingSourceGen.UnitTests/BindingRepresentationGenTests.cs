@@ -456,8 +456,8 @@ public class BindingRepresentationGenTests
 			new TypeDescription("int", IsValueType: true, IsNullable: true),
 				new EquatableArray<IPathPart>([
 				new IndexAccess("Item", "key"),
-				new ConditionalAccess(new MemberAccess("Length", IsValueType: true)), // TODO: Improve naming so this looks right
-            ]),
+					new ConditionalAccess(new MemberAccess("Length", IsValueType: true)), // TODO: Improve naming so this looks right
+				]),
 			SetterOptions: new(IsWritable: false),
 			NullableContextEnabled: true,
 			MethodType: InterceptedMethodType.SetBinding);
@@ -540,9 +540,9 @@ public class BindingRepresentationGenTests
 			new TypeDescription("global::MyNamespace.MyPropertyClass", IsNullable: true),
 				new EquatableArray<IPathPart>([
 				new IndexAccess("Item", 12),
-				new ConditionalAccess(new IndexAccess("Indexer", "Abc")),
-				new IndexAccess("Item", 0),
-			]),
+					new ConditionalAccess(new IndexAccess("Indexer", "Abc")),
+					new IndexAccess("Item", 0),
+				]),
 			SetterOptions: new(IsWritable: true),
 			NullableContextEnabled: true,
 			MethodType: InterceptedMethodType.SetBinding);
@@ -574,8 +574,8 @@ public class BindingRepresentationGenTests
 			new TypeDescription("char", IsValueType: true),
 				new EquatableArray<IPathPart>([
 				new MemberAccess("s"),
-				new IndexAccess("Chars", 0, IsValueType: true),
-			]),
+					new IndexAccess("Chars", 0, IsValueType: true),
+				]),
 			SetterOptions: new(IsWritable: true),
 			NullableContextEnabled: true,
 			MethodType: InterceptedMethodType.SetBinding);

@@ -6,11 +6,11 @@ namespace Microsoft.Maui.TestCases.Tests.Issues;
 
 public class Bugzilla26233 : _IssuesUITest
 {
-    public Bugzilla26233(TestDevice testDevice) : base(testDevice)
-    {
-    }
+	public Bugzilla26233(TestDevice testDevice) : base(testDevice)
+	{
+	}
 
-    public override string Issue => "Windows phone crashing when going back to page containing listview with Frame inside ViewCell";
+	public override string Issue => "Windows phone crashing when going back to page containing listview with Frame inside ViewCell";
 
 	// [Test]
 	// [Category(UITestCategories.ListView)]

@@ -6,14 +6,14 @@ namespace Microsoft.Maui.TestCases.Tests.Issues;
 
 public class Bugzilla25662 : _IssuesUITest
 {
-    public Bugzilla25662(TestDevice testDevice) : base(testDevice)
-    {
-    }
+	public Bugzilla25662(TestDevice testDevice) : base(testDevice)
+	{
+	}
 
-    public override string Issue => "Setting IsEnabled does not disable SwitchCell";
+	public override string Issue => "Setting IsEnabled does not disable SwitchCell";
 
 	// [Test]
-    // [Category(UITestCategories.Cells)]
+	// [Category(UITestCategories.Cells)]
 	// [FailsOnIOS]
 	// [FailsOnWindows]
 	// public void Bugzilla25662Test()

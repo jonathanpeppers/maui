@@ -47,7 +47,7 @@ namespace Maui.Controls.Sample.Pages
 		{
 			var statusResult = "";
 
-			var asyncFuncResult = await hwv.InvokeJavaScriptAsync<Dictionary<string,string>>(
+			var asyncFuncResult = await hwv.InvokeJavaScriptAsync<Dictionary<string, string>>(
 				"EvaluateMeWithParamsAndAsyncReturn",
 				SampleInvokeJsContext.Default.DictionaryStringString,
 				new object?[] { "new_key", "new_value" },

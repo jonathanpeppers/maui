@@ -13,17 +13,37 @@ public class GestureRecognizerBenchmarker
 	public void Setup()
 	{
 		_views = [
-			new Border(), new BoxView(), new CarouselView(), new Grid(), new Entry(), new Picker(), new CollectionView(),
-			new CheckBox(), new DatePicker(), new Stepper(), new Slider(), new ActivityIndicator(),
-			#pragma warning disable CS0618 // Type or member is obsolete
+			new Border(),
+			new BoxView(),
+			new CarouselView(),
+			new Grid(),
+			new Entry(),
+			new Picker(),
+			new CollectionView(),
+			new CheckBox(),
+			new DatePicker(),
+			new Stepper(),
+			new Slider(),
+			new ActivityIndicator(),
+#pragma warning disable CS0618 // Type or member is obsolete
 			new Frame(),
-			#pragma warning restore CS0618 // Type or member is obsolete
-			new ContentView(), new ProgressBar(), new SearchBar(), new Switch(), new TimePicker(), new WebView(), new Button(),
+#pragma warning restore CS0618 // Type or member is obsolete
+			new ContentView(),
+			new ProgressBar(),
+			new SearchBar(),
+			new Switch(),
+			new TimePicker(),
+			new WebView(),
+			new Button(),
 		];
 
 		_gestureRecognizers = [
-			new PointerGestureRecognizer(), new TapGestureRecognizer(), new PanGestureRecognizer(),
-			new SwipeGestureRecognizer(), new DragGestureRecognizer(), new DropGestureRecognizer(),
+			new PointerGestureRecognizer(),
+			new TapGestureRecognizer(),
+			new PanGestureRecognizer(),
+			new SwipeGestureRecognizer(),
+			new DragGestureRecognizer(),
+			new DropGestureRecognizer(),
 		];
 	}
 
@@ -51,7 +71,7 @@ public class GestureRecognizerBenchmarker
 		}
 	}
 
-	
+
 	[Benchmark]
 	public void ClearLotsOfGestureRecognizers()
 	{
@@ -65,7 +85,7 @@ public class GestureRecognizerBenchmarker
 		layout.GestureRecognizers.Clear();
 	}
 
-		
+
 	[Benchmark]
 	public void RemoveLotsOfGestureRecognizers()
 	{

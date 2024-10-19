@@ -24,7 +24,7 @@ public class Bugzilla39331 : _IssuesUITest
 	// 	App.WaitForTextToBePresentInElement("btnLogin", "Blocked?");
 
 	// 	App.Tap("btnLogin");
-		
+
 	// 	Assert.That(App.FindElement("btnLogin").GetText()?
 	// 		.Equals("Guess Not", StringComparison.OrdinalIgnoreCase),
 	// 		Is.False);

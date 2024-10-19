@@ -284,7 +284,7 @@ namespace UITest.Appium
 		public static void TouchAndHoldCoordinates(this IApp app, float x, float y)
 		{
 			app.CommandExecutor.Execute("touchAndHoldCoordinates", new Dictionary<string, object>
-			{		
+			{
 				{ "x", x },
 				{ "y", y }
 			});

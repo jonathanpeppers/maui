@@ -6,11 +6,11 @@ namespace Microsoft.Maui.TestCases.Tests.Issues;
 
 public class Bugzilla28001 : _IssuesUITest
 {
-    public Bugzilla28001(TestDevice testDevice) : base(testDevice)
-    {
-    }
+	public Bugzilla28001(TestDevice testDevice) : base(testDevice)
+	{
+	}
 
-    public override string Issue => "[Android] TabbedPage: invisible tabs are not Disposed";
+	public override string Issue => "[Android] TabbedPage: invisible tabs are not Disposed";
 
 	// [FailsOnIOS]
 	// [FailsOnAndroid]

@@ -38,13 +38,13 @@ public class Bugzilla30317 : _IssuesUITest
 
 	// 	App.WaitForElement ("PageTwo");
 	// 	App.Screenshot ("I see Page 2");
-			
+
 	// 	App.WaitForElement ("PageTwoItem1");
 	// 	App.TouchAndHold ("PageTwoItem1");
-			
+
 	// 	App.WaitForElement ("PageTwoItem5");
 	// 	App.TouchAndHold ("PageTwoItem5");
-			
+
 	// 	App.Screenshot ("I did not crash");
 	// }
 
