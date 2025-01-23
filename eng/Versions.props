@@ -50,7 +50,7 @@
     <MicrosoftExtensionsLoggingDebugVersion>10.0.0-alpha.1.25072.13</MicrosoftExtensionsLoggingDebugVersion>
     <MicrosoftExtensionsPrimitivesVersion>10.0.0-alpha.1.25072.13</MicrosoftExtensionsPrimitivesVersion>
     <!-- xamarin/xamarin-android -->
-    <MicrosoftAndroidSdkWindowsPackageVersion>35.99.0-ci.main.128</MicrosoftAndroidSdkWindowsPackageVersion>
+    <MicrosoftAndroidSdkWindowsPackageVersion>35.99.0-ci.main.208</MicrosoftAndroidSdkWindowsPackageVersion>
     <!-- xamarin/xamarin-macios -->
     <MicrosoftMacCatalystSdknet100_182PackageVersion>18.2.10321-net10-p2</MicrosoftMacCatalystSdknet100_182PackageVersion>
     <MicrosoftmacOSSdknet100_152PackageVersion>15.2.10321-net10-p2</MicrosoftmacOSSdknet100_152PackageVersion>
@@ -106,13 +106,6 @@
     <SystemIOUnmanagedMemoryStreamPackageVersion>4.3.0</SystemIOUnmanagedMemoryStreamPackageVersion>
     <SystemObjectModelPackageVersion>4.3.0</SystemObjectModelPackageVersion>
     <SystemRuntimeCompilerServicesUnsafePackageVersion>6.1.0</SystemRuntimeCompilerServicesUnsafePackageVersion>
-    <!-- GLIDE - the android maven artifact in /src/Core/AndroidNative/maui/build.gradle -->
-    <!-- must be kept in sync with the binding library version to it here: -->
-    <_XamarinAndroidGlideVersion>4.16.0.6</_XamarinAndroidGlideVersion>
-    <_XamarinAndroidXSecurityVersion>1.1.0.2-alpha06</_XamarinAndroidXSecurityVersion>
-    <_XamarinGoogleCryptoTinkAndroidVersion>1.15.0.1</_XamarinGoogleCryptoTinkAndroidVersion>
-    <!-- Android Maps -->
-    <XamarinGooglePlayServicesMaps>119.0.0.2</XamarinGooglePlayServicesMaps>
     <!--
       SKIASHARP & HARFBUZZSHARP - the various things must be kept in sync with maui graphics:
        - NuGet versions below
@@ -175,7 +168,7 @@
     <DotNetMauiManifestVersionBand>$(DotNetVersionBand)</DotNetMauiManifestVersionBand>
     <DotNetMonoManifestVersionBand>$(DotNetVersionBand)</DotNetMonoManifestVersionBand>
     <DotNetEmscriptenManifestVersionBand>$(DotNetVersionBand)</DotNetEmscriptenManifestVersionBand>
-    <DotNetAndroidManifestVersionBand>$(DotNetVersionBand)</DotNetAndroidManifestVersionBand>
+    <DotNetAndroidManifestVersionBand>10.0.100-preview.3</DotNetAndroidManifestVersionBand>
     <DotNetMaciOSManifestVersionBand>$(DotNetVersionBand)</DotNetMaciOSManifestVersionBand>
     <DotNetTizenManifestVersionBand>9.0.100</DotNetTizenManifestVersionBand>
     <MicrosoftMacCatalystSdkPackageVersion>$(MicrosoftMacCatalystSdknet100_182PackageVersion)</MicrosoftMacCatalystSdkPackageVersion>

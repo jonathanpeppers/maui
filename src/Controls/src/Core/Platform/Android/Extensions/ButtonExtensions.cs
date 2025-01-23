@@ -8,6 +8,8 @@ using Microsoft.Maui.Handlers;
 using static Microsoft.Maui.Controls.Button;
 using AButton = AndroidX.AppCompat.Widget.AppCompatButton;
 
+#pragma warning disable CS0618 // Type or member is obsolete
+
 namespace Microsoft.Maui.Controls.Platform
 {
 	public static class ButtonExtensions

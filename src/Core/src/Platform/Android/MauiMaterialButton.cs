@@ -7,6 +7,8 @@ using Android.Views;
 using AndroidX.Core.Widget;
 using Google.Android.Material.Button;
 
+#pragma warning disable CS0618 // Type or member is obsolete
+
 namespace Microsoft.Maui.Platform
 {
 	public class MauiMaterialButton : MaterialButton
