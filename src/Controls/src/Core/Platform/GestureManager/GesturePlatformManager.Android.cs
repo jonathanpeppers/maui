@@ -10,6 +10,8 @@ using Microsoft.Maui.Controls.Internals;
 using Microsoft.Maui.Graphics;
 using AView = Android.Views.View;
 
+#pragma warning disable CS0618 // Type or member is obsolete
+
 namespace Microsoft.Maui.Controls.Platform
 {
 	class GesturePlatformManager : IDisposable

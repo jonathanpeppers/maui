@@ -125,18 +125,22 @@ namespace Microsoft.Maui.Storage
 
 		ISharedPreferences CreateEncryptedSharedPreferences()
 		{
-			var context = Application.Context;
+			throw new System.NotImplementedException();
 
-			var prefsMainKey = new MasterKey.Builder(context, Alias)
-				.SetKeyScheme(MasterKey.KeyScheme.Aes256Gcm)
-				.Build();
+			// Might be useful for future reference
+			// var context = Application.Context;
 
-			return EncryptedSharedPreferences.Create(
-				context,
-				Alias,
-				prefsMainKey,
-				EncryptedSharedPreferences.PrefKeyEncryptionScheme.Aes256Siv,
-				EncryptedSharedPreferences.PrefValueEncryptionScheme.Aes256Gcm);
+			//var keygen = new KeyGenParameterSpec.Builder(Alias, KeyStorePurpose.Encrypt | KeyStorePurpose.Decrypt)
+			//	.Build();
+			// .SetKeyScheme(MasterKey.KeyScheme.Aes256Gcm) ?
+
+			// var prefsMainKey = new MasterKeys.GetOrCreate(MasterKeys.Aes256GcmSpec);
+			// return EncryptedSharedPreferences.Create(
+			// 	context,
+			// 	Alias,
+			// 	prefsMainKey,
+			// 	EncryptedSharedPreferences.PrefKeyEncryptionScheme.Aes256Siv,
+			// 	EncryptedSharedPreferences.PrefValueEncryptionScheme.Aes256Gcm);
 		}
 	}
 }
