@@ -255,7 +255,7 @@ namespace Microsoft.Maui.TestCases.Tests
 				}
 			}
 		}
-		
+
 #if MACUITEST
 		byte[] TakeScreenshot()
 		{

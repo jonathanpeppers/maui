@@ -43,7 +43,7 @@ namespace Microsoft.Maui.Platform
 			}
 		}
 
-		UIView? PlatformContent
+		static UIView? PlatformContent
 		{
 			get
 			{
@@ -69,7 +69,7 @@ namespace Microsoft.Maui.Platform
 
 		void UpdateClip()
 		{
-			var content = PlatformContent;
+			var content = ContentView.PlatformContent;
 
 			if (Clip is null || Bounds == CGRect.Empty || content == null || content.Frame == CGRect.Empty)
 			{
@@ -131,7 +131,7 @@ namespace Microsoft.Maui.Platform
 		public override void WillRemoveSubview(UIView uiview)
 		{
 			// Make sure we're not holding a mask for content we no longer own
-			if (uiview == PlatformContent)
+			if (uiview == ContentView.PlatformContent)
 			{
 				RemoveContentMask();
 			}

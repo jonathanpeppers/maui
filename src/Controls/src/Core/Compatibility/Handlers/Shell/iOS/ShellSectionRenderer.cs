@@ -633,7 +633,7 @@ namespace Microsoft.Maui.Controls.Platform.Compatibility
 				_completionTasks[pageViewController] = completionSource;
 
 			PushViewController(pageViewController, animated);
-			
+
 			if (completionSource != null && !showsPresentation)
 				completionSource.TrySetResult(true);
 		}

@@ -72,7 +72,7 @@ namespace Microsoft.Maui.TestCases.Tests
             VerifyScreenshot();
         }
 
-        #if TEST_FAILS_ON_IOS
+#if TEST_FAILS_ON_IOS
         // The screenshot that's currently generated for this test is wrong
         // So, we're ignoring this test due to it causing confusion when other changes
         // cause this test to fail.
@@ -93,7 +93,7 @@ namespace Microsoft.Maui.TestCases.Tests
 
             VerifyScreenshot();
         }
-        #endif
+#endif
     }
 #endif
 }

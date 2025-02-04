@@ -40,7 +40,7 @@ namespace Microsoft.Maui.TestCases.Tests.Issues
 			App.Tap("BiggerButton");
 			var updatedSize1 = App.WaitForElement("TestEntry").GetRect().Height;
 			Assert.That(updatedSize1, Is.GreaterThan(updatedSize));
-			
+
 			App.Tap("BiggerButton");
 			var updatedSize2 = App.WaitForElement("TestEntry").GetRect().Height;
 			Assert.That(updatedSize2, Is.GreaterThan(updatedSize1));
