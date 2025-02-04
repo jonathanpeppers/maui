@@ -6,7 +6,7 @@ public class AppiumCatalystSpecificActions : ICommandExecutionGroup
 {
 	const string EnterFullScreenCommand = "enterFullScreen";
 	const string ExitFullScreenCommand = "exitFullScreen";
-	
+
 	readonly AppiumApp _appiumApp;
 
 	readonly List<string> _commands = new()
@@ -34,7 +34,7 @@ public class AppiumCatalystSpecificActions : ICommandExecutionGroup
 			_ => CommandResponse.FailedEmptyResponse,
 		};
 	}
-	
+
 	CommandResponse EnterFullScreen(IDictionary<string, object> parameters)
 	{
 		try
@@ -48,7 +48,7 @@ public class AppiumCatalystSpecificActions : ICommandExecutionGroup
 			return CommandResponse.FailedEmptyResponse;
 		}
 	}
-	
+
 	CommandResponse ExitFullScreen(IDictionary<string, object> parameters)
 	{
 		try
