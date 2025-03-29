@@ -22,7 +22,7 @@ namespace Microsoft.Maui.DeviceTests
 				return nativeView.Alpha;
 			});
 		}
-		
+
 		Task<bool> GetPlatformIsVisible(CheckBoxHandler checkBoxHandler)
 		{
 			return InvokeOnMainThreadAsync(() =>
